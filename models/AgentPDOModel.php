@@ -23,6 +23,14 @@ class AgentPDOModel {
         }
     }
 
+    public function getAppointments($firstDay, $lastDay){
+        $pdo = PDOModel::connect();
+        $res = $pdo->select("id, start_time_ms, end_time_ms")
+                    ->from("APPOINTMENTS")
+                    ->where("start_time_ms >='$firstDay' AND end_time_ms <='$lastDay'")
+                    ->exec();
+        return $res;
+    }
     /**
      * @return array
      */
