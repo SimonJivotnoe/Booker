@@ -4,6 +4,7 @@ class DataContModel
 {
     private $whichPageStart = array();
     private $dataInPageArr = array();
+    private $role = '';
     private static $_instance;
     public static function getInstance()
     {
@@ -36,6 +37,22 @@ class DataContModel
     {
         return array_splice($this->dataInPageArr, 0);
 
+    }
+
+    /**
+     * @return string
+     */
+    public function getRole()
+    {
+        return $this->role;
+    }
+
+    /**
+     * @param string $role
+     */
+    public function setRole($role)
+    {
+        $this->role = $role;
     }
 
 

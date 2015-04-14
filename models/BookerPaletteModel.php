@@ -2,7 +2,7 @@
 
 
 class BookerPaletteModel {
-    private $repArr = array();
+    private $repArr = array('%EMPLOYEELISTBUTTON%' => '',);
 
     /**
      *
@@ -19,12 +19,17 @@ class BookerPaletteModel {
     {
         $obj = DataContModel::getInstance();
         $arr = $obj->getData();
+        //var_dump($arr);
+        $role = $obj->getRole();
         $sub = new SubstitutionModel();
-        $this->repArr['%MODAL%'] = $sub->subHTMLReplace('bookIt.html',array() );
-        if (!empty($arr)) {
-            return $arr;
-        } else {
-            return $this->repArr;
+        if ($role) {
+            $this->repArr['%EMPLOYEELISTBUTTON%'] = $sub->subHTMLReplace('employeeListButton.html',array());
         }
+        $userList = '';
+        foreach ($arr as $key => $val) {
+            $userList .= '<option>'.$val['user_name'].'</option>';
+        }
+        $this->repArr['%MODAL%'] = $sub->subHTMLReplace('bookIt.html',array('%USERSLIST%' => $userList) );
+        return $this->repArr;
     }
 } 

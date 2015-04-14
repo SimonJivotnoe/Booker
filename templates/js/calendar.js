@@ -27,7 +27,6 @@ $( document ).ready( function ()
 
     function firstDayInMS( inputData )
     {
-        $( '#calendarTable' ).empty();
         var date = new Date( inputData ); //console.log('Today is: ' + date);
         var monthName = GetMonthName(date.getMonth());
         $( '#monthYear' ).html( monthName + '  ' + date.getFullYear() );
@@ -80,6 +79,7 @@ $( document ).ready( function ()
     {
         var dateIncr = startDateBuild;
         var headData;
+        var output = '';
         if ( lScomm() == 'Monday begin' )
         {
             headData += buildHead(lScomm());
@@ -88,7 +88,6 @@ $( document ).ready( function ()
         {
             headData += buildHead(lScomm());
         }
-        $( '#calendarTable' ).append( headData );
         $.ajax( {
             url   : 'index.php?page=ajaxcalendarbuilder&start=' + vfirstDayInMS + '&end=' + lastDayOfMothInMS,
             method: 'GET'
@@ -97,7 +96,7 @@ $( document ).ready( function ()
             var objJSON = JSON.parse( data );
             for ( var i = 0; i <= 5; i ++ )
             {
-                var output = "<tr>";
+                output += "<tr>";
                 var outputTD = '';
                 var outputTDEvent = '';
                 for ( var j = 0; j <= 6; j ++ )
@@ -131,10 +130,10 @@ $( document ).ready( function ()
                     dateIncr += msInDay;
                 }
                 output += outputTD + "</tr>";
-                //console.log(output);
-
-                $( '#calendarTable' ).append( output );
             }
+            $( '#calendarTable' ).empty();
+            $( '#calendarTable' ).append( headData );
+            $( '#calendarTable' ).append( output );
         } );
 
     }

@@ -19,8 +19,8 @@ class Router
         if (isset($controllerNameInLowerCase)) {
             //after finding key "page" in array $_GET we assigns to $pageName value of key "page"
             //capitalizes the first letter of the value of the variable $pageName
-            $pageName = ucwords($controllerNameInLowerCase);
-            //$pageName = ucfirst($controllerNameInLowerCase);
+            //$pageName = ucwords($controllerNameInLowerCase);
+            $pageName = ucfirst($controllerNameInLowerCase);
             // create a path to the controller, for example C://bookshop/controllers/Book_ctrl.php
             $pagePass = realpath(__DIR__) . '/controllers/' . $pageName . '.php';
             //check whether there is such a file
@@ -28,7 +28,7 @@ class Router
                 //launching the controller
                 new $pageName;
             } else {
-                new Page404();
+                new HomeCtrl();
             }
         } else {
             new HomeCtrl(); // else launching Home page

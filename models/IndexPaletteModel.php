@@ -19,6 +19,7 @@ class IndexPaletteModel {
     {
         $obj = DataContModel::getInstance();
         $arr = $obj->getData();
+
         if (!empty($arr)) {
             return $arr;
         } else {

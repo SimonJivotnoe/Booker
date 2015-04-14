@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="bookIt" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -11,8 +11,8 @@
                 <form id='bookForm' name='bookForm' method='POST' action='index.php?page=book_ctrl'>
                     <div class="col-md-12">1. Booked for:</div>
                     <div class="col-md-4">
-                        <select class="form-control">
-                            <option>1</option>
+                       <select class="form-control">
+                           %USERSLIST%
                         </select>
                     </div>
                     <div class="col-md-12">2. I would like to book this meeting:</div>

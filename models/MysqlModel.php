@@ -27,7 +27,7 @@ class MysqlModel {
     function checkFormInputs($checkArr){
         $cName = $checkArr['loginAF'];
         $cPass = $checkArr['passAF'];
-        $result = mysql_query("SELECT user_name, user_pass FROM employees WHERE user_name = '$cName' AND user_pass = '$cPass'");
+        $result = mysql_query("SELECT user_name, user_pass FROM employees.css WHERE user_name = '$cName' AND user_pass = '$cPass'");
         $row = mysql_fetch_assoc($result);
         if (empty($row)) {
             return false;
