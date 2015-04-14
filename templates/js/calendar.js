@@ -2,15 +2,18 @@ $( document ).ready( function ()
 {
     var today = new Date();
     if ( localStorage.getItem( 'settings' ) == null )
-    {console.log('if');
+    {
         localStorage[ 'settings' ] = JSON.stringify( [ { "start day of week": 'Monday begin'} ] );
         $( '#weekBegin' ).text( 'Sunday begin' );
     } else {
         if ('Sunday begin' == lScomm()) {
             $( '#weekBegin' ).text( 'Monday begin' );
-        } else {
+        } else if('Monday begin' == lScomm()){
             $( '#weekBegin' ).text( 'Sunday begin' );
-        }
+        } else {
+			localStorage[ 'settings' ] = JSON.stringify( [ { "start day of week": 'Monday begin'} ] );
+        $( '#weekBegin' ).text( 'Sunday begin' );
+		}
     }
     var firstDayOfWeekOfMonth = '';
     var month = '';
@@ -21,7 +24,6 @@ $( document ).ready( function ()
     var daysInMonth = '';
     var msInDay = 1000 * 60 * 60 * 24;
     firstDayInMS( today );
-    console.log('here');
 
     function firstDayInMS( inputData )
     {
@@ -189,7 +191,8 @@ $( document ).ready( function ()
                     if ( new Date( parseInt( val ) ).getMonth() == new Date( currentDay ).getMonth() &&
                         new Date( parseInt( val ) ).getDate() == new Date( currentDay ).getDate() )
                     {
-                        res += '<li><a>' + new Date( parseInt( val ) ).getHours() + ':' +
+                        res += '<li><a class="appointment" name="'+new Date( currentDay ).getDate()+'">' +
+                        new Date( parseInt( val ) ).getHours() + ':' +
                         twoDigitsInMinutes(new Date( parseInt( val )) ) + ' - ';
                     }
                 } else if(key == 'end_time_ms'){
@@ -235,5 +238,8 @@ $( document ).ready( function ()
         curYear = $(this).val();
         getListOfDays(curYear, curMonth);
     });
-
+    $('#calendarTable').on('click', '.appointment', function(){
+        console.log($(this ).attr('name'));
+        console.log($(this ).text());
+    })
 } );
