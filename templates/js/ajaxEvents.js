@@ -7,7 +7,6 @@ function checkInputs( url )
     } ).then( function ( data )
     {
         var objJSON = JSON.parse( data );
-        console.log(data);
         if ( Object.keys( objJSON ).length == 0 )
         {
             window.location.href = "/index.php";
@@ -31,6 +30,28 @@ function deleteUser(url, userId) {
         var objJSON = JSON.parse( data );
         if (objJSON[0]) {
             $('body' ).find('.panel-default[name*='+userId+']' ).empty();
+        }
+    } )
+}
+
+function newUser(url){
+    $.ajax( {
+        url   : url,
+        method: 'POST',
+        data  : $( ".newUser" ).serialize()
+    } ).then( function ( data )
+    {
+        var objJSON = JSON.parse( data );
+        console.log(data);
+        if ( Object.keys( objJSON ).length == 0 )
+        {
+            window.location.href = "/index.php";
+        } else
+        {
+            $.each( objJSON, function ( key, val )
+            {
+                $('.' + key).html(val);
+            } )
         }
     } )
 }

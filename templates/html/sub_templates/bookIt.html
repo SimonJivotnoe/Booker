@@ -34,15 +34,16 @@
                     <div class="col-md-12">3. Specify what the time and end of the meeting (This will be what people see
                         on the calendar.):
                     </div>
-                    <div class="col-md-7">
+                    <div class="col-md-12">
                         <div class="col-md-3">
-                            <select class="form-control">
-                                <option>1</option>
+                            <select class="form-control startHour">
+
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <select class="form-control">
-                                <option>1</option>
+                            <select class="form-control startMin">
+                                <option value="00">00</option>
+                                <option value="30">30</option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -52,15 +53,16 @@
                         </div>
                     </div>
                     <div class="col-md-12">&nbsp</div>
-                    <div class="col-md-7">
+                    <div class="col-md-12">
                         <div class="col-md-3">
-                            <select class="form-control">
-                                <option>1</option>
+                            <select class="form-control endHour">
+
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <select class="form-control">
-                                <option>1</option>
+                            <select class="form-control endMin">
+                                <option value="00">00</option>
+                                <option value="30">30</option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -106,7 +108,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-primary" disabled>Save changes</button>
             </div>
         </div>
     </div>

@@ -3,7 +3,7 @@ $( document ).ready( function ()
     var today = new Date();
     if ( localStorage.getItem( 'settings' ) == null )
     {
-        localStorage[ 'settings' ] = JSON.stringify( [ { "start day of week": 'Monday begin'} ] );
+        localStorage[ 'settings' ] = JSON.stringify( [ { "start day of week": 'Monday begin', "timeFormat": '24'}]);
         $( '#weekBegin' ).text( 'Sunday begin' );
     } else {
         if ('Sunday begin' == lScomm()) {
@@ -11,7 +11,7 @@ $( document ).ready( function ()
         } else if('Monday begin' == lScomm()){
             $( '#weekBegin' ).text( 'Sunday begin' );
         } else {
-			localStorage[ 'settings' ] = JSON.stringify( [ { "start day of week": 'Monday begin'} ] );
+			localStorage[ 'settings' ] = JSON.stringify( [ { "start day of week": 'Monday begin', "timeFormat": '24'} ] );
         $( '#weekBegin' ).text( 'Sunday begin' );
 		}
     }
@@ -20,7 +20,7 @@ $( document ).ready( function ()
     var year = '';
     var dayOfWeek = '';
     var vfirstDayInMS = '';
-    var lastDayOfMothInMS = '';
+    var lastDayOfMonthInMS = '';
     var daysInMonth = '';
     var msInDay = 1000 * 60 * 60 * 24;
     firstDayInMS( today );
@@ -37,7 +37,7 @@ $( document ).ready( function ()
         year = date.getFullYear(); //console.log('Year: ' + year);  
         var firstDayOfMonth = new Date( year, month, 1 );
         daysInMonth = 32 - new Date( year, month, 32 ).getDate(); //console.log('Year: ' + daysInMonth);
-        lastDayOfMothInMS = new Date( year, month, daysInMonth ).getTime(); //console.log('Year: ' + lastDayOfMothInMS);
+        lastDayOfMonthInMS = new Date( year, month, daysInMonth, 23, 59, 59 ).getTime(); //console.log('Year: ' + lastDayOfMonthInMS);
         firstDayOfWeekOfMonth = firstDayOfMonth.getDay(); //console.log('Day of a week of 1st: ' + firstDayOfWeekOfMonth);
         vfirstDayInMS = new Date( year, month, 1 ).getTime(); //console.log('First Day in miliseconds: ' + vfirstDayInMS);
         var firstDateInCalendar = startDateInCalendar( vfirstDayInMS );
@@ -76,7 +76,7 @@ $( document ).ready( function ()
     }
 
     function buildTable( startDateBuild )
-    {
+    {console.log(lastDayOfMonthInMS);
         var dateIncr = startDateBuild;
         var headData;
         var output = '';
@@ -89,7 +89,7 @@ $( document ).ready( function ()
             headData += buildHead(lScomm());
         }
         $.ajax( {
-            url   : 'index.php?page=ajaxcalendarbuilder&start=' + vfirstDayInMS + '&end=' + lastDayOfMothInMS,
+            url   : 'index.php?page=ajaxcalendarbuilder&start=' + vfirstDayInMS + '&end=' + lastDayOfMonthInMS,
             method: 'GET'
         } ).then( function ( data )
         {
@@ -101,7 +101,7 @@ $( document ).ready( function ()
                 var outputTDEvent = '';
                 for ( var j = 0; j <= 6; j ++ )
                 {
-                    if ( dateIncr < vfirstDayInMS || dateIncr > lastDayOfMothInMS )
+                    if ( dateIncr < vfirstDayInMS || dateIncr > lastDayOfMonthInMS )
                     {
                         outputTD += "<td class='tdHead inactiveDay'><div><p>&nbsp" +"</p></div></td>";
 
@@ -160,18 +160,27 @@ $( document ).ready( function ()
         if ( $( '#weekBegin' ).text() == 'Sunday begin' )
         {
             $( '#weekBegin' ).text( 'Monday begin' );
-            //dayBegin = 'Sunday begin';
             localStorage[ 'settings' ] = JSON.stringify( [ { "start day of week": 'Sunday begin'} ] );
         } else
         {
             $( '#weekBegin' ).text( 'Sunday begin' );
-            //dayBegin = 'Monday begin';
             localStorage[ 'settings' ] = JSON.stringify( [ { "start day of week": 'Monday begin'} ] );
         }
         firstDayInMS( today );
-
     } );
 
+    $('#timeFormat').on('click', function(){
+        if ( $( '#timeFormat' ).text() == '24' )
+        {
+            $( '#timeFormat' ).text( 'AM / PM' );
+           // localStorage[ 'settings' ] = JSON.stringify( [ { "timeFormat": 'Sunday begin'} ] );
+        } else
+        {
+            $( '#timeFormat' ).text( '24' );
+            //localStorage[ 'settings' ] = JSON.stringify( [ { "timeFormat": 'Monday begin'} ] );
+        }
+        //firstDayInMS( today );
+    })
     function twoDigitsInMinutes(minutes) {
         var result = ( minutes.getMinutes()<10?'0':'') + minutes.getMinutes();
         return result;
@@ -206,14 +215,16 @@ $( document ).ready( function ()
         } );
         return res;
     }
+
     var curMonth = '';
     var curDate = '';
     var curYear = '';
     $('.bookIt').on('click', function(){
-        $('.bookItMonth, .bookItDate, .bookItYear' ).html('');
+        $('.bookItMonth, .bookItDate, .bookItYear, .startHour, .endHour' ).html('');
         var dayStart = today.getDate();
         if (new Date().setHours(0,0,0,0) <= today.setHours(0,0,0,0)) {
             fillDateSelect(month, daysInMonth, dayStart, year );
+            fillHoursAndMinutes(getTimeFormat(), new Date(year, month, dayStart ));
             curMonth = month;
             curDate = dayStart;
             curYear = year;
@@ -223,19 +234,22 @@ $( document ).ready( function ()
             curYear = new Date().getFullYear();
             var curLastDay = 32 - new Date( curYear, curMonth, 32 ).getDate();
             fillDateSelect(curMonth, curLastDay, curDate, curYear );
+            fillHoursAndMinutes(getTimeFormat(), new Date(curYear, curMonth, curDate));
         }
     })
+
     $('.bookItMonth').change(function(){
         curMonth = $(this).val();
         getListOfDays(curYear, curMonth);
+        fillHoursAndMinutes(getTimeFormat(), new Date(curYear, curMonth, curDate));
     });
     $('.bookItDate').change(function(){
         curDate = $(this).val();
-        console.log(curDate);
     });
     $('.bookItYear').change(function(){
         curYear = $(this).val();
         getListOfDays(curYear, curMonth);
+        fillHoursAndMinutes(getTimeFormat(), new Date(curYear, curMonth, curDate));
     });
     $('#calendarTable').on('click', '.appointment', function(){
         console.log($(this ).attr('name'));

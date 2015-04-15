@@ -30,21 +30,23 @@
                 </div>
                 <div id="collapseAdd" class="panel-collapse collapse">
                     <div class="panel-body">
-                        <table class="table col-md-8 table-striped">
-                            <tbody>
-                            <tr>
-                                <th>Login</th>
-                                <th>Password</th>
-                                <th>Email</th>
-                            </tr>
-                            <tr>
-                                <td><input type="textfield" /></td>
-                                <td><input type="textfield" /></td>
-                                <td><input type="textfield" /></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <button type="button" class="btn btn-success pull-right">Add</button>
+                        <form method="POST" class="newUser">
+                            <table class="table col-md-8 table-striped">
+                                <tbody>
+                                <tr>
+                                    <th>Login</th>
+                                    <th>Password</th>
+                                    <th>Email</th>
+                                </tr>
+                                <tr>
+                                    <td><input type="textfield" name="login"/></td>
+                                    <td><input type="textfield" name="pass"/></td>
+                                    <td><input type="textfield" name="email"/></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <button type="button" class="btn btn-success pull-right newUserButton">Add</button>
+                        </form>
                     </div>
                 </div>
             </div>

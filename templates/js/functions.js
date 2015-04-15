@@ -22,6 +22,14 @@ function lScomm() {
     var objLS = JSON.parse(localStorage[ 'settings' ]);
     return objLS[0]['start day of week'];
 }
+
+function lSchanger(paramKey, paramVal) {
+    var objLS = JSON.parse(localStorage[ 'settings' ]);
+    $.each( objLS, function ( key, val )
+    {
+
+    });
+}
 var months = ['January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'];
 function GetMonthName(monthNumber) {
@@ -49,6 +57,7 @@ function generateDaysList(month, lastDayOfMonth, dayStart, year) {
 
         }
     }
+
 }
 function fillDateSelect(month, lastDayOfMonth, dayStart, year ) {
     for (var i = 0; i <= 11; i++) {
@@ -68,7 +77,6 @@ function fillDateSelect(month, lastDayOfMonth, dayStart, year ) {
         } else {
             $('.bookItYear' ).append('<option value="' + count + '">' + count +  '</option>');
         }
-
     }
 }
 
@@ -81,8 +89,7 @@ function weekEnds(date){
 }
 
 function getListOfDays(curYear, curMonth) {
-    console.log('ok');
-    $('.bookItDate' ).html('');
+    $('.bookItDate, .startHour, .endHour' ).html('');
     var curDate = new Date(new Date().setHours(0,0,0,0));
     var daysInMonth = 32 - new Date( curYear, curMonth, 32 ).getDate();
     if (curDate.getFullYear() == curYear) {
@@ -100,6 +107,39 @@ function getListOfDays(curYear, curMonth) {
     }
 }
 
+function fillHoursAndMinutes(timeFormat, date){
+    var nowHour = new Date().getHours();
+    var start = 0;
+    var end = 23;
+    if ('am' == timeFormat) {
+        start = 1;
+        end = 12;
+    }
+    if (date.setHours(0,0,0,0) == new Date().setHours(0,0,0,0)) {
+        for (var i = start; i <= end; i++) {
+            if (nowHour == i) {
+                $('.startHour, .endHour').append('<option class="activeDay" selected="selected" value="' +
+                i + '">' + i + '</option>');
+            } else if(nowHour > i) {
+                $('.startHour, .endHour').append('<option disabled value="' + i + '">' + i + '</option>');
+            } else {
+                $('.startHour, .endHour').append('<option class="activeDay" value="' + i + '">' + i + '</option>');
+            }
+        }
+    } else if (date.getTime() > new Date().getTime()){
+        for (var i = start; i <= end; i++) {
+            $('.startHour, .endHour').append('<option class="activeDay" value="' + i + '">' + i + '</option>');
+        }
+    } else {
+        for (var i = start; i <= end; i++) {
+            $('.startHour, .endHour').append('<option disabled value="' + i + '">' + i + '</option>');
+        }
+    }
+}
+
+function getTimeFormat() {
+    return 24;
+}
 function confirmDelete() {
     if (confirm('Are You sure want to delete this user and all his appointments ?')) {
         return true;
