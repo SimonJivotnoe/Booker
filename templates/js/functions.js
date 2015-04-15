@@ -99,3 +99,11 @@ function getListOfDays(curYear, curMonth) {
         generateDaysList(curMonth, daysInMonth, 1, curYear);
     }
 }
+
+function confirmDelete() {
+    if (confirm('Are You sure want to delete this user and all his appointments ?')) {
+        return true;
+    } else {
+        return false;
+    }
+}

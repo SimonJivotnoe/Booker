@@ -53,6 +53,18 @@ class AgentPDOModel {
                     ->exec();
         return $res;
     }
+
+    public function deleteUser($userId){
+        $pdo = PDOModel::connect();
+        $res = $pdo ->delete("EMPLOYEES")
+            ->where("user_id = '$userId'")
+            ->execInsert();
+        if (0 == count($res)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
     /**
      * @return array
      */

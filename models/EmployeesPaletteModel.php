@@ -16,6 +16,7 @@ class EmployeesPaletteModel {
     {
         $obj = DataContModel::getInstance();
         $arr = $obj->getData();
+        //var_dump($arr);
         $sub = new SubstitutionModel();
         $i = 1;
         $userList = '';
@@ -23,6 +24,7 @@ class EmployeesPaletteModel {
             $userArr = array('%USER_NAME%' => $val['user_name'],
                              '%USER_PASS%' => $val['user_pass'],
                              '%USER_EMAIL%' => $val['user_mail'],
+                             '%USER_ID%' => $val['user_id'],
                              '%I%' => $i,);
             $userList .= $sub->subHTMLReplace('empAcc.html', $userArr);
             $i++;
