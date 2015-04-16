@@ -145,6 +145,7 @@ function fillHoursAndMinutes( timeFormat, date )
 {
     $( '.startHour, .endHour' ).html( '' );
     var nowHour = new Date().getHours();
+    var nowMinutes = new Date().getMinutes();
     var start = 0;
     var end = 23;
     if ( 'am' == timeFormat )
@@ -158,8 +159,13 @@ function fillHoursAndMinutes( timeFormat, date )
         {
             if ( nowHour == i )
             {
-                $( '.startHour, .endHour' ).append( '<option class="activeDay" selected="selected" value="' +
-                i + '">' + i + '</option>' );
+                if (nowMinutes >= 30) {
+                    $( '.startHour, .endHour' ).append( '<option disabled value="' + i + '">' + i + '</option>' );
+                } else {
+                    $( '.startHour, .endHour' ).append( '<option class="activeDay" selected="selected" value="' +
+                    i + '">' + i + '</option>' );
+                }
+
             } else if ( nowHour > i )
             {
                 $( '.startHour, .endHour' ).append( '<option disabled value="' + i + '">' + i + '</option>' );
@@ -198,9 +204,8 @@ function confirmDelete()
     }
 }
 
-function validation( year, month, day )
+function validation( year, month, day, insert )
 {
-    var check = 0;
     year = parseInt( year );//console.log(year);
     month = parseInt( month );//console.log(month);
     day = parseInt( day );//console.log(day);
@@ -212,37 +217,20 @@ function validation( year, month, day )
     var appEnd = new Date(year, month, day, endHour, endMinutes ).getTime();//console.log(appEnd);
     var dayStart = new Date(year, month, day ).getTime(); //console.log(dayStart);
     var dayEnd = new Date(year, month, day, 23, 59).getTime(); //console.log(dayEnd);
-    if ( new Date(year, month, day) >= new Date().setHours( 0, 0, 0, 0 ) )
-    {
-        $('.checkDate' ).html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
-        $.ajax( {
-            url   : 'index.php?page=AjaxTime&start=' + appStart + '&end=' + appEnd + '&startDay=' +
-            dayStart + '&endDay=' + dayEnd,
-            method: 'GET'
-        } ).then( function ( data )
-        {console.log(data);
-            var objJSON = JSON.parse( data );
-            if (true == objJSON[0]) {
-                check += 1;
-                $('.checkTime' ).html('<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>');
+    if (insert == 'insert') {
+        insertApp('index.php?page=AjaxTime', appStart, appEnd, dayStart, dayEnd);
+    } else {
+        if ( new Date(year, month, day) >= new Date().setHours( 0, 0, 0, 0 )){
+            $('.checkDate' ).html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
+            if (appEnd > appStart) {
+                checkTime(appStart, appEnd, dayStart, dayEnd);
             } else {
-                console.log(objJSON);
-                $.each( objJSON, function ( key, val )
-                {
-                    console.log(val);
-                } )
-                $('.checkTime' ).html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
+                $('.checkTime' ).html('<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>');
+                $('.newBookItButton' ).attr('disabled', 'disabled');
             }
-        })
-    } else {
-        check += 1;
-        $('.checkDate' ).html('<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>');
-        $('.checkTime' ).html('<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>');
-    }
-
-    if (0 == check) {
-        $('.newBookItButton' ).removeAttr('disabled');
-    } else {
-        $('.newBookItButton' ).attr('disabled', 'disabled');
+        }else {
+            $('.checkDate' ).html('<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>');
+            $('.newBookItButton' ).attr('disabled', 'disabled');
+        }
     }
 }

@@ -7,8 +7,9 @@
                         aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel">Book the Boardroom</h4>
             </div>
+            <form id='bookForm' name='bookForm' method='POST'>
             <div class="modal-body">
-                <form id='bookForm' name='bookForm' method='POST' action='index.php?page=book_ctrl'>
+
                     <div class="col-md-12">1. Booked for:</div>
                     <div class="col-md-4">
                        <select class="form-control">
@@ -22,12 +23,12 @@
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <select class="form-control bookItDate">
+                        <select class="form-control bookItDate" name="formDate">
 
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <select class="form-control bookItYear">
+                        <select class="form-control bookItYear" name="formYear">
 
                         </select>
                     </div>
@@ -38,12 +39,12 @@
                     </div>
                     <div class="col-md-12">
                         <div class="col-md-3">
-                            <select class="form-control startHour">
+                            <select class="form-control startHour" name="startHour">
 
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <select class="form-control startMin">
+                            <select class="form-control startMin" name="startMin">
                                 <option value="00">00</option>
                                 <option value="30">30</option>
                             </select>
@@ -58,12 +59,12 @@
                     <div class="col-md-2 checkTime"></div>
                     <div class="col-md-12">
                         <div class="col-md-3">
-                            <select class="form-control endHour">
+                            <select class="form-control endHour" name="endHour">
 
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <select class="form-control endMin">
+                            <select class="form-control endMin" name="endMin">
                                 <option value="30">30</option>
                                 <option value="00">00</option>
                             </select>
@@ -80,39 +81,31 @@
                         link.):
                     </div>
 
-                    <textarea class="form-control bookerTextArea" rows="3"></textarea>
+                    <textarea class="form-control bookerTextArea" name="bookerTextArea" rows="3"></textarea>
 
                     <div class="col-md-12">5. Is this going to be a recurring event?</div>
 
-                    <input id="recurring_off" type="radio" name="recurring" value='0' onClick="agreeRecurring(false)">
+                    <input type="radio" name="recurring" value="off" checked required>
                     No<br/>
-                    <input id="recurring_on" type="radio" name="recurring" value='on' checked
-                           onClick="agreeRecurring(true)"> Yes<br/>
+                    <input type="radio" name="recurring" value='on' required> Yes<br/>
 
                     <div class="col-md-12">6. If it is recurring, specify weekly, bi-weekly or monthly.</div>
-                    <input id="recursion_1" type="radio" name="recurring_result" value='7' checked
-                           onclick="durationCntrl()"
-                           onfocus="set_border(document.getElementById('zduration'))">
+                <div class="recWrapper">
+                    <input id="recursion_1" type="radio" name="recurringRes" value='weekly' checked>
                     <span class="recurring"> weekly</span><br/>
-                    <input id="recursion_2" type="radio" name="recurring_result" value='14' onclick="durationCntrl()"
-                           onfocus="set_border(document.getElementById('zduration'))">bi-weekly<br/>
-                    <input id="recursion_3" type="radio" name="recurring_result" value='28' onclick="durationCntrl()"
-                           onfocus="set_border(document.getElementById('zduration'))">monthly<br/>
+                    <input id="recursion_2" type="radio" name="recurringRes" value='bi-weekly'>bi-weekly<br/>
+                    <input id="recursion_3" type="radio" name="recurringRes" value='monthly'>monthly<br/>
+                    <span>duration (max 4 weeks)</span>
+                    <input id="duration" value='1' type="number" min="1" max="4" name="duration"
+                           maxlength="1" size="4"/>
+                </div>
 
-                    <span id="duration" name="duration" class="nonwarning">duration (max 4 weeks)</span>
-
-                    <input id="num_duration" value='1' type="number" min="1" max="4" name="num_duration"
-                           class="fielddis" maxlength="1" size="4"
-                           onfocus="set_border(this);"/>
-
-                    <input class='bookSubmit' type='submit' value='Book' name='bookIt'>
-                    <input class='bookSubmit' type='reset' value='Reset'>
-                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary newBookItButton" disabled>Save changes</button>
-            </div>
+                <button type="button" class="btn btn-primary newBookItButton" disabled>Book</button>
+                <!--<input type="submit" class="btn btn-primary newBookItButton" disabled value="Book">-->
+            </div></form>
         </div>
     </div>
 </div>

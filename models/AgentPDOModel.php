@@ -49,7 +49,7 @@ class AgentPDOModel {
         $pdo = PDOModel::connect();
         $res = $pdo->select("id, start_time_ms, end_time_ms")
                     ->from("APPOINTMENTS")
-                    ->where("start_time_ms >='$firstDay' AND end_time_ms <='$lastDay'")
+                    ->where("start_time_ms >='$firstDay' AND end_time_ms <='$lastDay' ORDER BY start_time_ms ASC")
                     ->exec();
         return $res;
     }
@@ -68,11 +68,24 @@ class AgentPDOModel {
 
     public function checkAppointments($firstDay, $lastDay){
         $pdo = PDOModel::connect();
-        $res = $pdo->select("id, start_time_ms, end_time_ms")
+        $res = $pdo->select("start_time_ms, end_time_ms")
             ->from("APPOINTMENTS")
             ->where("start_time_ms ='$firstDay' AND end_time_ms ='$lastDay'")
             ->exec();
         if (0 == count($res)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public function insertAppointment($user_id, $start, $end, $specifics){
+        $pdo = PDOModel::connect();
+        $res = $pdo->insert("APPOINTMENTS")
+                   ->fields("user_id, start_time_ms, end_time_ms, description")
+                   ->values("'$user_id', '$start', '$end', '$specifics'")
+                   ->execInsertWithLastID();
+        if (empty($res)) {
             return false;
         } else {
             return true;

@@ -3,7 +3,8 @@ $( document ).ready( function ()
     var today = new Date();
     if ( localStorage.getItem( 'settings' ) == null )
     {
-        localStorage[ 'settings' ] = JSON.stringify( [ { "start day of week": 'Monday begin', "timeFormat": '24'}]);
+        localStorage[ 'settings' ] =
+            JSON.stringify( [ { "start day of week": 'Monday begin', "timeFormat": '24'}]);
         $( '#weekBegin' ).text( 'Sunday begin' );
     } else {
         if ('Sunday begin' == lScomm()) {
@@ -11,7 +12,8 @@ $( document ).ready( function ()
         } else if('Monday begin' == lScomm()){
             $( '#weekBegin' ).text( 'Sunday begin' );
         } else {
-			localStorage[ 'settings' ] = JSON.stringify( [ { "start day of week": 'Monday begin', "timeFormat": '24'} ] );
+			localStorage[ 'settings' ] =
+                JSON.stringify( [ { "start day of week": 'Monday begin', "timeFormat": '24'} ] );
         $( '#weekBegin' ).text( 'Sunday begin' );
 		}
     }
@@ -37,9 +39,9 @@ $( document ).ready( function ()
         year = date.getFullYear(); //console.log('Year: ' + year);  
         var firstDayOfMonth = new Date( year, month, 1 );
         daysInMonth = 32 - new Date( year, month, 32 ).getDate(); //console.log('Year: ' + daysInMonth);
-        lastDayOfMonthInMS = new Date( year, month, daysInMonth, 23, 59, 59 ).getTime(); //console.log('Year: ' + lastDayOfMonthInMS);
-        firstDayOfWeekOfMonth = firstDayOfMonth.getDay(); //console.log('Day of a week of 1st: ' + firstDayOfWeekOfMonth);
-        vfirstDayInMS = new Date( year, month, 1 ).getTime(); //console.log('First Day in miliseconds: ' + vfirstDayInMS);
+        lastDayOfMonthInMS = new Date( year, month, daysInMonth, 23, 59, 59 ).getTime();
+        firstDayOfWeekOfMonth = firstDayOfMonth.getDay();
+        vfirstDayInMS = new Date( year, month, 1 ).getTime();
         var firstDateInCalendar = startDateInCalendar( vfirstDayInMS );
         buildTable( firstDateInCalendar );
     }
@@ -170,13 +172,13 @@ $( document ).ready( function ()
     } );
 
     $('#timeFormat').on('click', function(){
-        if ( $( '#timeFormat' ).text() == '24' )
+        if ( $( '#timeFormat' ).text() == '24 Hours' )
         {
             $( '#timeFormat' ).text( 'AM / PM' );
            // localStorage[ 'settings' ] = JSON.stringify( [ { "timeFormat": 'Sunday begin'} ] );
         } else
         {
-            $( '#timeFormat' ).text( '24' );
+            $( '#timeFormat' ).text( '24 Hours' );
             //localStorage[ 'settings' ] = JSON.stringify( [ { "timeFormat": 'Monday begin'} ] );
         }
         //firstDayInMS( today );
@@ -225,7 +227,7 @@ $( document ).ready( function ()
         if (new Date().setHours(0,0,0,0) <= today.setHours(0,0,0,0)) {
             fillDateSelect(month, daysInMonth, dayStart, year );
             fillHoursAndMinutes(getTimeFormat(), new Date(year, month, dayStart ));
-            validation(year, month, dayStart );
+            validation(year, month, dayStart, '' );
             curMonth = month;
             curDate = dayStart;
             curYear = year;
@@ -236,31 +238,66 @@ $( document ).ready( function ()
             var curLastDay = 32 - new Date( curYear, curMonth, 32 ).getDate();
             fillDateSelect(curMonth, curLastDay, curDate, curYear );
             fillHoursAndMinutes(getTimeFormat(), new Date(curYear, curMonth, curDate));
-            validation(curYear, curMonth, curDate);
+            validation(curYear, curMonth, curDate, '');
         }
+        $('.recWrapper *').prop('disabled',true);
     })
 
     $('.bookItMonth').change(function(){
         curMonth = parseInt($(this).val());
         getListOfDays(curYear, curMonth);
         fillHoursAndMinutes(getTimeFormat(), new Date(curYear, curMonth, curDate));
-        validation(curYear, curMonth, curDate);
+        validation(curYear, curMonth, curDate, '');
     });
     $('.bookItDate').change(function(){
         curDate = parseInt($(this).val());
         fillHoursAndMinutes(getTimeFormat(), new Date(curYear, curMonth, curDate));
-        validation(curYear, curMonth, curDate);
+        validation(curYear, curMonth, curDate, '');
     });
     $('.bookItYear').change(function(){
         curYear = parseInt($(this).val());
         getListOfDays(curYear, curMonth);
         fillHoursAndMinutes(getTimeFormat(), new Date(curYear, curMonth, curDate));
-        validation(curYear, curMonth, curDate);
+        validation(curYear, curMonth, curDate, '');
     });
     $('.startHour, .startMin, .endHour, .endMin').change(function(){
-        validation(curYear, curMonth, curDate);
+        validation(curYear, curMonth, curDate, '');
     });
-    $('#calendarTable').on('click', '.appointment', function(){
+
+    $('input[type=radio][name=recurring]').change(function() {
+        if (this.value == 'off') {
+            $('.recWrapper *').prop('disabled',true);
+        }
+        else if (this.value == 'on') {
+            $('.recWrapper *').prop('disabled',false);
+        }
+    });
+
+    $('input[type=radio][name=recurringRes]').change(function() {
+        if (this.value == 'weekly') {
+            $('#duration').val(1).attr({ max: '4', value: '1' });
+        }
+        else if (this.value == 'bi-weekly') {
+            $('#duration').val(1).attr({ max: '2', value: '1'  });
+        } else if (this.value == 'monthly') {
+            $('#duration').val(1).attr({ max: '1', value: '1'  });
+        }
+    });
+
+    $('#duration').keyup(function(){
+        var max = $('#duration' ).attr('max');
+        var min = $('#duration' ).attr('min');
+        if ($('#duration' ).val() >= max) {
+            $('#duration' ).val(max);
+        } else if($('#duration' ).val() <= min){
+            $('#duration' ).val(min);
+        }
+    })
+
+    $('.newBookItButton').on('click', function(){
+        validation(curYear, curMonth, curDate, 'insert');
+    })
+     $('#calendarTable').on('click', '.appointment', function(){
         console.log($(this ).attr('name'));
         console.log($(this ).text());
     })
