@@ -17,7 +17,7 @@
                     </div>
                     <div class="col-md-12">2. I would like to book this meeting:</div>
                     <div class="col-md-4 bookItMonthWrapper">
-                        <select class="form-control bookItMonth">
+                        <select class="form-control bookItMonth" name="formMonth">
 
                         </select>
                     </div>
@@ -31,6 +31,8 @@
 
                         </select>
                     </div>
+                    <div class="col-md-1 checkDate"></div>
+
                     <div class="col-md-12">3. Specify what the time and end of the meeting (This will be what people see
                         on the calendar.):
                     </div>
@@ -52,7 +54,8 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-12">&nbsp</div>
+                    <div class="col-md-10">&nbsp</div>
+                    <div class="col-md-2 checkTime"></div>
                     <div class="col-md-12">
                         <div class="col-md-3">
                             <select class="form-control endHour">
@@ -61,8 +64,8 @@
                         </div>
                         <div class="col-md-3">
                             <select class="form-control endMin">
-                                <option value="00">00</option>
                                 <option value="30">30</option>
+                                <option value="00">00</option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -108,7 +111,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" disabled>Save changes</button>
+                <button type="button" class="btn btn-primary newBookItButton" disabled>Save changes</button>
             </div>
         </div>
     </div>

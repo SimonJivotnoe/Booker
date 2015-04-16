@@ -111,3 +111,9 @@ table {
 .activeDay {
     color: #1a20ff;
 }
+.glyphicon-ok {
+    color: #21a50c;
+}
+.glyphicon-minus {
+    color: red;
+}

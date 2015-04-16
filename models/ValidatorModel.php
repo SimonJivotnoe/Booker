@@ -43,6 +43,18 @@ class ValidatorModel
         }
     }
 
+    public function checkTime($arr, $start, $end){
+        $check = 0;
+        foreach ($arr as $key => $val) {
+            if ($end <= $val['start_time_ms'] || $start >= $val['end_time_ms']) {
+            
+            } else {
+                $check .= 1;
+            }
+        }
+        return $check;
+    }
+
     public function getErrMess(){
         return $this->errorsMess;
     }
@@ -54,6 +66,4 @@ class ValidatorModel
     {
         return $this->variablesArray;
     }
-
-
 } 

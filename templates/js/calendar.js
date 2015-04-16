@@ -76,7 +76,7 @@ $( document ).ready( function ()
     }
 
     function buildTable( startDateBuild )
-    {console.log(lastDayOfMonthInMS);
+    {
         var dateIncr = startDateBuild;
         var headData;
         var output = '';
@@ -225,6 +225,7 @@ $( document ).ready( function ()
         if (new Date().setHours(0,0,0,0) <= today.setHours(0,0,0,0)) {
             fillDateSelect(month, daysInMonth, dayStart, year );
             fillHoursAndMinutes(getTimeFormat(), new Date(year, month, dayStart ));
+            validation(year, month, dayStart );
             curMonth = month;
             curDate = dayStart;
             curYear = year;
@@ -235,21 +236,29 @@ $( document ).ready( function ()
             var curLastDay = 32 - new Date( curYear, curMonth, 32 ).getDate();
             fillDateSelect(curMonth, curLastDay, curDate, curYear );
             fillHoursAndMinutes(getTimeFormat(), new Date(curYear, curMonth, curDate));
+            validation(curYear, curMonth, curDate);
         }
     })
 
     $('.bookItMonth').change(function(){
-        curMonth = $(this).val();
+        curMonth = parseInt($(this).val());
         getListOfDays(curYear, curMonth);
         fillHoursAndMinutes(getTimeFormat(), new Date(curYear, curMonth, curDate));
+        validation(curYear, curMonth, curDate);
     });
     $('.bookItDate').change(function(){
-        curDate = $(this).val();
+        curDate = parseInt($(this).val());
+        fillHoursAndMinutes(getTimeFormat(), new Date(curYear, curMonth, curDate));
+        validation(curYear, curMonth, curDate);
     });
     $('.bookItYear').change(function(){
-        curYear = $(this).val();
+        curYear = parseInt($(this).val());
         getListOfDays(curYear, curMonth);
         fillHoursAndMinutes(getTimeFormat(), new Date(curYear, curMonth, curDate));
+        validation(curYear, curMonth, curDate);
+    });
+    $('.startHour, .startMin, .endHour, .endMin').change(function(){
+        validation(curYear, curMonth, curDate);
     });
     $('#calendarTable').on('click', '.appointment', function(){
         console.log($(this ).attr('name'));

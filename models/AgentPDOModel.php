@@ -65,6 +65,19 @@ class AgentPDOModel {
             return true;
         }
     }
+
+    public function checkAppointments($firstDay, $lastDay){
+        $pdo = PDOModel::connect();
+        $res = $pdo->select("id, start_time_ms, end_time_ms")
+            ->from("APPOINTMENTS")
+            ->where("start_time_ms ='$firstDay' AND end_time_ms ='$lastDay'")
+            ->exec();
+        if (0 == count($res)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
     /**
      * @return array
      */
