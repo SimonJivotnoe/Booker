@@ -3,6 +3,7 @@
 
 class AgentPDOModel {
     private $resArr = array();
+    private $resID;
     public function __construct() {
 
     }
@@ -73,19 +74,35 @@ class AgentPDOModel {
             ->where("start_time_ms ='$firstDay' AND end_time_ms ='$lastDay'")
             ->exec();
         if (0 == count($res)) {
-            return false;
-        } else {
             return true;
+        } else {
+            return false;
         }
     }
 
-    public function insertAppointment($user_id, $start, $end, $specifics){
+    public function insertAppointment($user_id, $start, $end, $specifics, $duration){
         $pdo = PDOModel::connect();
-        $res = $pdo->insert("APPOINTMENTS")
-                   ->fields("user_id, start_time_ms, end_time_ms, description")
-                   ->values("'$user_id', '$start', '$end', '$specifics'")
-                   ->execInsertWithLastID();
-        if (empty($res)) {
+        if (empty($_POST['recurringRes'])) {
+            $this->resID = $pdo->insert("APPOINTMENTS")
+                ->fields("user_id, start_time_ms, end_time_ms, description")
+                ->values("'$user_id', '$start', '$end', '$specifics'")
+                ->execInsertWithLastID();
+        } else {
+            $recType = (int)$_POST['recurringRes'];
+            $msInDay = 1000 * 60 * 60 * 24;
+            $start = $start;
+            $end = $end;
+            for ($i = 0; $i <= $duration; $i++) {
+                $this->resID = $pdo->insert("APPOINTMENTS")
+                    ->fields("user_id, start_time_ms, end_time_ms, description")
+                    ->values("'$user_id', '$start', '$end', '$specifics'")
+                    ->execInsertWithLastID();
+                $start = ($recType * $msInDay) + $start;
+                $end = ($recType * $msInDay) + $end;
+            }
+        }
+
+        if (empty($this->resID)) {
             return false;
         } else {
             return true;

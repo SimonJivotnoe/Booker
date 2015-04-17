@@ -13,7 +13,7 @@ function buildHead( day )
     } else
     {
         nameDayOfWeek.splice( 0, 0, nameDayOfWeek.splice( - 1, 5 )[ 0 ] );
-        for ( var i = 0; i <= 6; i ++ )
+        for ( i = 0; i <= 6; i ++ )
         {
             headData += '<th>' + nameDayOfWeek[ i ] + '</th>';
         }
@@ -29,14 +29,63 @@ function lScomm()
     return objLS[ 0 ][ 'start day of week' ];
 }
 
+function getLSTimeFormat(){
+    var objLS = JSON.parse( localStorage[ 'settings' ] );
+    return objLS[ 0 ][ 'timeFormat' ];
+}
+
+function setLS() {
+    localStorage[ 'settings' ] =
+        JSON.stringify( [ { "start day of week": 'Monday begin', "timeFormat": '24 Hours'} ] );
+    $( '#weekBegin' ).text( 'Sunday begin' );
+    $( '#timeFormat' ).text( 'AM / PM' );
+}
+
+function lSbuttonChanger(paramKey, paramVal1, paramVal2, buttonName){
+    var objLS = JSON.parse( localStorage[ 'settings' ] );
+    if (paramVal1 == objLS[ 0 ][ paramKey ]) {
+        $( buttonName ).text( paramVal2 );
+    } else if(paramVal2 == objLS[ 0 ][ paramKey ]){
+        $( buttonName ).text( paramVal1 );
+    } else {
+        setLS();
+    }
+}
+
 function lSchanger( paramKey, paramVal )
 {
     var objLS = JSON.parse( localStorage[ 'settings' ] );
     $.each( objLS, function ( key, val )
     {
-
+        val[paramKey] = paramVal;
     } );
+    localStorage[ 'settings' ] = JSON.stringify(objLS);
 }
+
+function twoDigitsInMinutes(minutes) {
+    var result = ( minutes.getMinutes()<10?'0':'') + minutes.getMinutes();
+    return result;
+}
+
+function timeFormatter(hours){
+    var objLS = JSON.parse( localStorage[ 'settings' ] );
+    if ('24 Hours' == getLSTimeFormat()) {
+        var res = hours.getHours() + ':' + twoDigitsInMinutes(hours);
+        return res;
+    } else {
+        if (hours.getHours() >= 12){
+            var hour = parseInt(hours.getHours()) - 12;
+            var amPm = "PM";
+        } else {
+            var hour = hours.getHours();
+            var amPm = "AM";
+        }
+        var time = hour + ":" + twoDigitsInMinutes(hours) + " " + amPm;
+        return time;
+    }
+
+}
+
 var months = [ 'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December' ];
 function GetMonthName( monthNumber )
@@ -78,7 +127,7 @@ function generateDaysList( month, lastDayOfMonth, dayStart, year )
 }
 function fillDateSelect( month, lastDayOfMonth, dayStart, year )
 {
-    for ( var i = 0; i <= 11; i ++ )
+    for ( i = 0; i <= 11; i ++ )
     {
         if ( i == month )
         {
@@ -155,7 +204,7 @@ function fillHoursAndMinutes( timeFormat, date )
     }
     if ( date.setHours( 0, 0, 0, 0 ) == new Date().setHours( 0, 0, 0, 0 ) )
     {
-        for ( var i = start; i <= end; i ++ )
+        for ( i = start; i <= end; i ++ )
         {
             if ( nowHour == i )
             {
@@ -176,7 +225,7 @@ function fillHoursAndMinutes( timeFormat, date )
         }
     } else if ( date.getTime() > new Date().getTime() )
     {
-        for ( var i = start; i <= end; i ++ )
+        for ( i = start; i <= end; i ++ )
         {
             $( '.startHour, .endHour' ).append( '<option class="activeDay" value="' + i + '">' + i + '</option>' );
         }
@@ -191,20 +240,21 @@ function fillHoursAndMinutes( timeFormat, date )
 
 function getTimeFormat()
 {
-    return 24;
+    if ('24 Hours' == getLSTimeFormat()) {
+        return 24;
+    } else if('AM / PM' == getLSTimeFormat()){
+        return 'am';
+    } else {
+        return 24;
+    }
+
 }
 function confirmDelete()
 {
-    if ( confirm( 'Are You sure want to delete this user and all his appointments ?' ) )
-    {
-        return true;
-    } else
-    {
-        return false;
-    }
+    return confirm( 'Are You sure want to delete this user and all his appointments ?' );
 }
 
-function validation( year, month, day, insert )
+function validation( year, month, day, insert, recType, duration )
 {
     year = parseInt( year );//console.log(year);
     month = parseInt( month );//console.log(month);
@@ -218,12 +268,12 @@ function validation( year, month, day, insert )
     var dayStart = new Date(year, month, day ).getTime(); //console.log(dayStart);
     var dayEnd = new Date(year, month, day, 23, 59).getTime(); //console.log(dayEnd);
     if (insert == 'insert') {
-        insertApp('index.php?page=AjaxTime', appStart, appEnd, dayStart, dayEnd);
+        insertApp('index.php?page=AjaxTime', appStart, appEnd, dayStart, dayEnd, '', '');
     } else {
         if ( new Date(year, month, day) >= new Date().setHours( 0, 0, 0, 0 )){
             $('.checkDate' ).html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
             if (appEnd > appStart) {
-                checkTime(appStart, appEnd, dayStart, dayEnd);
+                checkTime(appStart, appEnd, dayStart, dayEnd, recType, duration);
             } else {
                 $('.checkTime' ).html('<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>');
                 $('.newBookItButton' ).attr('disabled', 'disabled');

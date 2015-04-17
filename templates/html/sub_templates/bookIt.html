@@ -49,10 +49,8 @@
                                 <option value="30">30</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <select class="form-control">
-                                <option>1</option>
-                            </select>
+                        <div class="col-md-3 startTimeFormat">
+
                         </div>
                     </div>
                     <div class="col-md-10">&nbsp</div>
@@ -69,10 +67,11 @@
                                 <option value="00">00</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <select class="form-control">
-                                <option>1</option>
-                            </select>
+                        <div class="col-md-3 endTimeFormat">
+                           <!-- <select class="form-control ">
+                                <option>AM</option>
+                                <option>PM</option>
+                            </select>-->
                         </div>
                     </div>
 
@@ -85,16 +84,18 @@
 
                     <div class="col-md-12">5. Is this going to be a recurring event?</div>
 
-                    <input type="radio" name="recurring" value="off" checked required>
+                    <input type="radio" name="recurring" class="offRec" value="0" checked required>
                     No<br/>
-                    <input type="radio" name="recurring" value='on' required> Yes<br/>
+                    <input type="radio" name="recurring" class="onRec" value='1' required> Yes<br/>
 
-                    <div class="col-md-12">6. If it is recurring, specify weekly, bi-weekly or monthly.</div>
+                    <div class="col-md-12">6. If it is recurring, specify weekly, bi-weekly or monthly.
+                        <span class="checkRec"></span>
+                    </div>
                 <div class="recWrapper">
-                    <input id="recursion_1" type="radio" name="recurringRes" value='weekly' checked>
+                    <input id="recursion_1" type="radio" name="recurringRes" value='7' checked>
                     <span class="recurring"> weekly</span><br/>
-                    <input id="recursion_2" type="radio" name="recurringRes" value='bi-weekly'>bi-weekly<br/>
-                    <input id="recursion_3" type="radio" name="recurringRes" value='monthly'>monthly<br/>
+                    <input id="recursion_2" type="radio" name="recurringRes" value='14'>bi-weekly<br/>
+                    <input id="recursion_3" type="radio" name="recurringRes" value='28'>monthly<br/>
                     <span>duration (max 4 weeks)</span>
                     <input id="duration" value='1' type="number" min="1" max="4" name="duration"
                            maxlength="1" size="4"/>
@@ -104,7 +105,6 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary newBookItButton" disabled>Book</button>
-                <!--<input type="submit" class="btn btn-primary newBookItButton" disabled value="Book">-->
             </div></form>
         </div>
     </div>

@@ -59,23 +59,33 @@ function newUser( url )
     } )
 }
 
-function checkTime( appStart, appEnd, dayStart, dayEnd )
+function checkTime( appStart, appEnd, dayStart, dayEnd, recType, duration )
 {
     $.ajax( {
         url   : 'index.php?page=AjaxTime&start=' + appStart + '&end=' + appEnd + '&startDay=' +
-        dayStart + '&endDay=' + dayEnd,
+        dayStart + '&endDay=' + dayEnd + '&recurringRes=' + recType + '&duration=' + duration,
         method: 'GET'
     } ).then( function ( data )
     {
         var objJSON = JSON.parse( data );
-        if ( true == objJSON[ 0 ] )
+        if ( false == objJSON[ 0 ] )
         {
             $( '.checkTime' ).html( '<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>' );
             $( '.newBookItButton' ).attr( 'disabled', 'disabled' );
+            if ($('#recursion_1').prop('disabled')) {
+
+            } else {
+            $( '.checkRec' ).html( '<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>' );
+            }
         } else
         {
             $( '.checkTime' ).html( '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>' );
             $( '.newBookItButton' ).removeAttr( 'disabled' );
+            if ($('#recursion_1').prop('disabled')) {
+
+        } else {
+            $( '.checkRec' ).html( '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>' );
+        }
         }
     } )
 }
@@ -90,6 +100,7 @@ function insertApp( url, appStart, appEnd, dayStart, dayEnd )
     } ).then( function ( data )
     {
         var objJSON = JSON.parse( data );
+        console.log(objJSON[ 0 ]);
         if ( true == objJSON[ 0 ] )
         {
             window.location.href = "/index.php";

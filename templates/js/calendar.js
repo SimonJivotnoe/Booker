@@ -3,19 +3,10 @@ $( document ).ready( function ()
     var today = new Date();
     if ( localStorage.getItem( 'settings' ) == null )
     {
-        localStorage[ 'settings' ] =
-            JSON.stringify( [ { "start day of week": 'Monday begin', "timeFormat": '24'}]);
-        $( '#weekBegin' ).text( 'Sunday begin' );
+        setLS();
     } else {
-        if ('Sunday begin' == lScomm()) {
-            $( '#weekBegin' ).text( 'Monday begin' );
-        } else if('Monday begin' == lScomm()){
-            $( '#weekBegin' ).text( 'Sunday begin' );
-        } else {
-			localStorage[ 'settings' ] =
-                JSON.stringify( [ { "start day of week": 'Monday begin', "timeFormat": '24'} ] );
-        $( '#weekBegin' ).text( 'Sunday begin' );
-		}
+        lSbuttonChanger('start day of week', 'Sunday begin', 'Monday begin', '#weekBegin');
+        lSbuttonChanger('timeFormat', 'AM / PM', '24 Hours', '#timeFormat');
     }
     var firstDayOfWeekOfMonth = '';
     var month = '';
@@ -162,11 +153,11 @@ $( document ).ready( function ()
         if ( $( '#weekBegin' ).text() == 'Sunday begin' )
         {
             $( '#weekBegin' ).text( 'Monday begin' );
-            localStorage[ 'settings' ] = JSON.stringify( [ { "start day of week": 'Sunday begin'} ] );
+            lSchanger( "start day of week", 'Sunday begin' );
         } else
         {
             $( '#weekBegin' ).text( 'Sunday begin' );
-            localStorage[ 'settings' ] = JSON.stringify( [ { "start day of week": 'Monday begin'} ] );
+            lSchanger( "start day of week", 'Monday begin' );
         }
         firstDayInMS( today );
     } );
@@ -175,18 +166,19 @@ $( document ).ready( function ()
         if ( $( '#timeFormat' ).text() == '24 Hours' )
         {
             $( '#timeFormat' ).text( 'AM / PM' );
-           // localStorage[ 'settings' ] = JSON.stringify( [ { "timeFormat": 'Sunday begin'} ] );
+            lSchanger( "timeFormat", '24 Hours' );
         } else
         {
             $( '#timeFormat' ).text( '24 Hours' );
-            //localStorage[ 'settings' ] = JSON.stringify( [ { "timeFormat": 'Monday begin'} ] );
+            lSchanger( "timeFormat", 'AM / PM' );
         }
-        //firstDayInMS( today );
+
+        firstDayInMS( today );
     })
-    function twoDigitsInMinutes(minutes) {
-        var result = ( minutes.getMinutes()<10?'0':'') + minutes.getMinutes();
-        return result;
-    }
+   /* function twoDigitsInMinutes(minutes) {
+    var result = ( minutes.getMinutes()<10?'0':'') + minutes.getMinutes();
+    return result;
+}*/
 
     function listSchedules( objJSON, currentDay )
     {
@@ -202,15 +194,17 @@ $( document ).ready( function ()
                         new Date( parseInt( val ) ).getDate() == new Date( currentDay ).getDate() )
                     {
                         res += '<li><a class="appointment" name="'+new Date( currentDay ).getDate()+'">' +
-                        new Date( parseInt( val ) ).getHours() + ':' +
-                        twoDigitsInMinutes(new Date( parseInt( val )) ) + ' - ';
+                        /*new Date( parseInt( val ) ).getHours() + ':' +
+                        twoDigitsInMinutes(new Date( parseInt( val )) ) + ' - ';*/
+                        timeFormatter(new Date( parseInt( val ) )) + ' - ';
                     }
                 } else if(key == 'end_time_ms'){
                     if ( new Date( parseInt( val ) ).getMonth() == new Date( currentDay ).getMonth() &&
                         new Date( parseInt( val ) ).getDate() == new Date( currentDay ).getDate() )
                     {
-                        res += new Date( parseInt( val ) ).getHours() + ':' +
-                        twoDigitsInMinutes(new Date( parseInt( val ) )) + '</a></li>';
+                        /*res += new Date( parseInt( val ) ).getHours() + ':' +
+                        twoDigitsInMinutes(new Date( parseInt( val ) )) + '</a></li>';*/
+                        res += timeFormatter(new Date( parseInt( val ) )) + '</a></li>';
                     }
                 }
             } );
@@ -221,13 +215,27 @@ $( document ).ready( function ()
     var curMonth = '';
     var curDate = '';
     var curYear = '';
+    var recType = 7;
+    var duration = '';
+    function durationCheck(){
+        if ($('#recursion_1').prop('disabled')) {
+            duration = '';
+        } else {
+            duration = $('#duration').val();
+        }
+    }
     $('.bookIt').on('click', function(){
-        $('.bookItMonth, .bookItDate, .bookItYear, .startHour, .endHour' ).html('');
+        $('.bookItMonth, .bookItDate, .bookItYear, .startHour, .endHour, .startTimeFormat, .endTimeFormat' ).html('');
+        if ('AM / PM' == getLSTimeFormat()) {
+            $('.startTimeFormat, .endTimeFormat' ).append(
+                '<select class="form-control"><option>AM</option><option>PM</option></select>'
+            );
+        }
         var dayStart = today.getDate();
         if (new Date().setHours(0,0,0,0) <= today.setHours(0,0,0,0)) {
             fillDateSelect(month, daysInMonth, dayStart, year );
             fillHoursAndMinutes(getTimeFormat(), new Date(year, month, dayStart ));
-            validation(year, month, dayStart, '' );
+            validation(year, month, dayStart, '', '', '' );
             curMonth = month;
             curDate = dayStart;
             curYear = year;
@@ -238,53 +246,65 @@ $( document ).ready( function ()
             var curLastDay = 32 - new Date( curYear, curMonth, 32 ).getDate();
             fillDateSelect(curMonth, curLastDay, curDate, curYear );
             fillHoursAndMinutes(getTimeFormat(), new Date(curYear, curMonth, curDate));
-            validation(curYear, curMonth, curDate, '');
+            validation(curYear, curMonth, curDate, '', '', '' );
         }
         $('.recWrapper *').prop('disabled',true);
+        $('.offRec').prop("checked", true);
+        $( '.checkRec' ).html( '' );
+        $('#duration').val(1);
     })
 
     $('.bookItMonth').change(function(){
         curMonth = parseInt($(this).val());
         getListOfDays(curYear, curMonth);
         fillHoursAndMinutes(getTimeFormat(), new Date(curYear, curMonth, curDate));
-        validation(curYear, curMonth, curDate, '');
+        durationCheck();
+        validation(curYear, curMonth, curDate, '', recType, duration );
     });
     $('.bookItDate').change(function(){
         curDate = parseInt($(this).val());
         fillHoursAndMinutes(getTimeFormat(), new Date(curYear, curMonth, curDate));
-        validation(curYear, curMonth, curDate, '');
+        durationCheck();
+        validation(curYear, curMonth, curDate, '', recType, duration );
     });
     $('.bookItYear').change(function(){
         curYear = parseInt($(this).val());
         getListOfDays(curYear, curMonth);
         fillHoursAndMinutes(getTimeFormat(), new Date(curYear, curMonth, curDate));
-        validation(curYear, curMonth, curDate, '');
+        durationCheck();
+        validation(curYear, curMonth, curDate, '', recType, duration );
     });
     $('.startHour, .startMin, .endHour, .endMin').change(function(){
-        validation(curYear, curMonth, curDate, '');
+        validation(curYear, curMonth, curDate, '', recType, duration );
     });
 
     $('input[type=radio][name=recurring]').change(function() {
-        if (this.value == 'off') {
+        if (this.value == '0') {
             $('.recWrapper *').prop('disabled',true);
+            $( '.checkRec' ).html( '' );
+            validation(curYear, curMonth, curDate, '', '', '' );
         }
-        else if (this.value == 'on') {
+        else if (this.value == '1') {
             $('.recWrapper *').prop('disabled',false);
+            $( '.checkRec' ).html( '' );
+            validation(curYear, curMonth, curDate, '', recType, 1);
         }
     });
 
     $('input[type=radio][name=recurringRes]').change(function() {
-        if (this.value == 'weekly') {
+        if (this.value == '7') {
             $('#duration').val(1).attr({ max: '4', value: '1' });
         }
-        else if (this.value == 'bi-weekly') {
+        else if (this.value == '14') {
             $('#duration').val(1).attr({ max: '2', value: '1'  });
-        } else if (this.value == 'monthly') {
+        } else if (this.value == '28') {
             $('#duration').val(1).attr({ max: '1', value: '1'  });
         }
+        recType = parseInt(this.value);
+        validation(curYear, curMonth, curDate, '', recType, 1);
     });
 
-    $('#duration').keyup(function(){
+    $('#duration').on('keyup change', function(){
         var max = $('#duration' ).attr('max');
         var min = $('#duration' ).attr('min');
         if ($('#duration' ).val() >= max) {
@@ -292,10 +312,11 @@ $( document ).ready( function ()
         } else if($('#duration' ).val() <= min){
             $('#duration' ).val(min);
         }
+        validation(curYear, curMonth, curDate, '', recType, parseInt($('#duration' ).val()));
     })
 
     $('.newBookItButton').on('click', function(){
-        validation(curYear, curMonth, curDate, 'insert');
+        validation(curYear, curMonth, curDate, 'insert', '', '');
     })
      $('#calendarTable').on('click', '.appointment', function(){
         console.log($(this ).attr('name'));
