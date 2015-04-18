@@ -9,13 +9,19 @@ $( document ).ready( function ()
         lSbuttonChanger('timeFormat', 'AM / PM', '24 Hours', '#timeFormat');
     }
     var firstDayOfWeekOfMonth = '';
-    var month = '';
-    var year = '';
-    var dayOfWeek = '';
+    var month = today.getMonth();
+    var year = today.getFullYear();
+    var day = today.getDate();
+    var dayOfWeek = today.getDay();
     var vfirstDayInMS = '';
     var lastDayOfMonthInMS = '';
     var daysInMonth = '';
     var msInDay = 1000 * 60 * 60 * 24;
+    if (6 == dayOfWeek) {
+        today = new Date(year, month, (day + 2));
+    } else if(0 == dayOfWeek){
+        today = new Date(year, month, (day + 1));
+    }
     firstDayInMS( today );
 
     function firstDayInMS( inputData )
@@ -24,10 +30,10 @@ $( document ).ready( function ()
         var monthName = GetMonthName(date.getMonth());
         $( '#monthYear' ).html( monthName + '  ' + date.getFullYear() );
         today = date;
-        dayOfWeek = date.getDay(); //console.log('Day of a week: ' + dayOfWeek);
-        var day = date.getDate(); //console.log('Date of month: ' + day);  
-        month = date.getMonth(); //console.log('Month: ' + day);   
-        year = date.getFullYear(); //console.log('Year: ' + year);  
+       // dayOfWeek = date.getDay(); //console.log('Day of a week: ' + dayOfWeek);
+         //console.log('Date of month: ' + day);
+       //console.log('Month: ' + day);
+         //console.log('Year: ' + year);
         var firstDayOfMonth = new Date( year, month, 1 );
         daysInMonth = 32 - new Date( year, month, 32 ).getDate(); //console.log('Year: ' + daysInMonth);
         lastDayOfMonthInMS = new Date( year, month, daysInMonth, 23, 59, 59 ).getTime();
@@ -175,10 +181,6 @@ $( document ).ready( function ()
 
         firstDayInMS( today );
     })
-   /* function twoDigitsInMinutes(minutes) {
-    var result = ( minutes.getMinutes()<10?'0':'') + minutes.getMinutes();
-    return result;
-}*/
 
     function listSchedules( objJSON, currentDay )
     {
@@ -194,16 +196,12 @@ $( document ).ready( function ()
                         new Date( parseInt( val ) ).getDate() == new Date( currentDay ).getDate() )
                     {
                         res += '<li><a class="appointment" name="'+new Date( currentDay ).getDate()+'">' +
-                        /*new Date( parseInt( val ) ).getHours() + ':' +
-                        twoDigitsInMinutes(new Date( parseInt( val )) ) + ' - ';*/
                         timeFormatter(new Date( parseInt( val ) )) + ' - ';
                     }
                 } else if(key == 'end_time_ms'){
                     if ( new Date( parseInt( val ) ).getMonth() == new Date( currentDay ).getMonth() &&
                         new Date( parseInt( val ) ).getDate() == new Date( currentDay ).getDate() )
                     {
-                        /*res += new Date( parseInt( val ) ).getHours() + ':' +
-                        twoDigitsInMinutes(new Date( parseInt( val ) )) + '</a></li>';*/
                         res += timeFormatter(new Date( parseInt( val ) )) + '</a></li>';
                     }
                 }

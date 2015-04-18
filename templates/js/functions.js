@@ -249,9 +249,22 @@ function getTimeFormat()
     }
 
 }
+
 function confirmDelete()
 {
     return confirm( 'Are You sure want to delete this user and all his appointments ?' );
+}
+
+function formatEncode(hour, position) {
+    if ('24 Hours' == getLSTimeFormat()) {
+        return hour;
+    } else {
+        if ('AM' == $(position + ' select').val()) {
+            return hour;
+        } else {
+            return hour + 12;
+        }
+    }
 }
 
 function validation( year, month, day, insert, recType, duration )
@@ -259,9 +272,11 @@ function validation( year, month, day, insert, recType, duration )
     year = parseInt( year );//console.log(year);
     month = parseInt( month );//console.log(month);
     day = parseInt( day );//console.log(day);
-    var startHour = parseInt($('.startHour' ).val());//console.log(startHour);
+   // var startHour = parseInt($('.startHour' ).val());//console.log(startHour);
+    var startHour = formatEncode(parseInt($('.startHour' ).val()), '.startTimeFormat');
     var startMinutes = parseInt($('.startMin' ).val());//console.log(startMinutes);
-    var endHour = parseInt($('.endHour' ).val());//console.log(endHour);
+    //var endHour = parseInt($('.endHour' ).val());//console.log(endHour);
+    var endHour = formatEncode(parseInt($('.endHour' ).val()), '.endTimeFormat');
     var endMinutes = parseInt($('.endMin' ).val());//console.log(endMinutes);
     var appStart = new Date(year, month, day, startHour, startMinutes ).getTime();//console.log(appStart);
     var appEnd = new Date(year, month, day, endHour, endMinutes ).getTime();//console.log(appEnd);
