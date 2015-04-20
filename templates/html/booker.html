@@ -9,16 +9,30 @@
 
 <body class="well">
 %MODAL%
-<div class="col-md-2 col-md-offset-5">
-    <div class="lang col-md-3">
-        <form method="POST">
-            <input type="submit" class="btn btn-warning" name="lang" value="en"/></form>
+<div class="col-md-8 col-md-offset-1 welcome">
+    <div class="col-md-2">
+        Welcome, %WELCOME%
     </div>
-    <div class="lang">
-        <form method="POST">
-            <input type="submit" class="btn btn-warning" name="lang" value="ru"/></form>
+    <div class="col-md-2">
+        <input type="submit" class="btn btn-danger logOff" value="Log Off"/>
+    </div>
+    <div class="col-md-2 col-md-offset-2">
+        <select name="rooms" class="rooms">
+            %ROOMS%
+        </select>
+    </div>
+    <div class="col-md-3 col-md-offset-1">
+        <div class="lang col-md-3">
+            <form method="POST">
+                <input type="submit" class="btn btn-warning" name="lang" value="en"/></form>
+        </div>
+        <div class="col-md-4 lang">
+            <form method="POST">
+                <input type="submit" class="btn btn-warning" name="lang" value="ru"/></form>
+        </div>
     </div>
 </div>
+
 <div class="col-md-12">
     <div class="monthYear col-md-2 col-md-offset-1">
         <button class="btn btn-primary" id="weekBegin"></button>
@@ -71,6 +85,7 @@
 <script src="templates/js/calendar.js"></script>
 <script src="templates/js/ajaxEvents.js"></script>
 <script src="templates/js/functions.js"></script>
+<script src="templates/js/HTMLBuilder.js"></script>
 <script src="templates/js/jquery.cookie.js"></script>
 </body>
 

@@ -6,8 +6,12 @@ class AjaxCalendarBuilder {
         $objView = DataContModel::getInstance();
         $firstDay = $_GET['start'];
         $lastDay = $_GET['end'];
+        $room_id = $_GET['room_id'];
+        $user_id = $_SESSION['BookerID'];
         $objAgent = new AgentPDOModel();
-        $res = $objAgent->getAppointments($firstDay, $lastDay);
+        $res = $objAgent->getAppointments($firstDay, $lastDay, $room_id);
+        array_push($res, array('user_id' => $user_id));
+        //$res['7777777'] = array('0' => $user_id);
         $objView->setData($res);
     }
 } 

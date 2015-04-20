@@ -35,8 +35,9 @@ function getLSTimeFormat(){
 }
 
 function setLS() {
+    var room = $('.rooms').val();
     localStorage[ 'settings' ] =
-        JSON.stringify( [ { "start day of week": 'Monday begin', "timeFormat": '24 Hours'} ] );
+        JSON.stringify( [ { "start day of week": 'Monday begin', "timeFormat": '24 Hours', "room": room } ] );
     $( '#weekBegin' ).text( 'Sunday begin' );
     $( '#timeFormat' ).text( 'AM / PM' );
 }
@@ -73,9 +74,15 @@ function timeFormatter(hours){
         var res = hours.getHours() + ':' + twoDigitsInMinutes(hours);
         return res;
     } else {
-        if (hours.getHours() >= 12){
+        if (hours.getHours() > 12){
             var hour = parseInt(hours.getHours()) - 12;
             var amPm = "PM";
+        } else if(hours.getHours() == 12){
+            var hour = 12;
+            var amPm = "PM";
+        } else if(hours.getHours() == 0) {
+            var hour = 12;
+            var amPm = "AM";
         } else {
             var hour = hours.getHours();
             var amPm = "AM";
@@ -84,6 +91,16 @@ function timeFormatter(hours){
         return time;
     }
 
+}
+
+function lSgetRoom(){
+    var objLS = JSON.parse( localStorage[ 'settings' ] );
+    return parseInt(objLS[ 0 ][ 'room' ]);
+}
+
+function selectedRoom(){
+    var room_id = lSgetRoom();
+    $(".rooms option[value="+room_id+"]" ).prop('selected', true);
 }
 
 var months = [ 'January', 'February', 'March', 'April', 'May', 'June',
@@ -190,51 +207,79 @@ function getListOfDays( curYear, curMonth )
     }
 }
 
-function fillHoursAndMinutes( timeFormat, date )
+function fillHoursAndMinutes( timeFormat, date)
 {
     $( '.startHour, .endHour' ).html( '' );
     var nowHour = new Date().getHours();
     var nowMinutes = new Date().getMinutes();
     var start = 0;
     var end = 23;
+    var startTF = '';
+    var endTF = '';
     if ( 'am' == timeFormat )
     {
-        start = 1;
-        end = 12;
+        end = 11;
+        startTF = $('.startTimeFormat select' ).val();
+        endTF = $('.endTimeFormat select' ).val();
     }
-    if ( date.setHours( 0, 0, 0, 0 ) == new Date().setHours( 0, 0, 0, 0 ) )
-    {
-        for ( i = start; i <= end; i ++ )
+    if (23 == end) {
+        if ( date.setHours( 0, 0, 0, 0 ) == new Date().setHours( 0, 0, 0, 0 ) )
         {
-            if ( nowHour == i )
+            for ( i = start; i <= end; i ++ )
             {
-                if (nowMinutes >= 30) {
-                    $( '.startHour, .endHour' ).append( '<option disabled value="' + i + '">' + i + '</option>' );
-                } else {
-                    $( '.startHour, .endHour' ).append( '<option class="activeDay" selected="selected" value="' +
-                    i + '">' + i + '</option>' );
+                if ( nowHour == i )
+                {
+                    if (nowMinutes >= 30) {
+                        hoursDisable(i);
+                    } else {
+                        hoursSelected(i);
+                    }
+                } else if ( nowHour > i )
+                {
+                    hoursDisable(i);
+                } else
+                {
+                    hoursActiveDay(i);
                 }
-
-            } else if ( nowHour > i )
+            }
+        } else if ( date.getTime() > new Date().getTime() )
+        {
+            for ( i = start; i <= end; i ++ )
             {
-                $( '.startHour, .endHour' ).append( '<option disabled value="' + i + '">' + i + '</option>' );
-            } else
+                hoursActiveDay(i);
+            }
+        } else
+        {
+            for ( var i = start; i <= end; i ++ )
             {
-                $( '.startHour, .endHour' ).append( '<option class="activeDay" value="' + i + '">' + i + '</option>' );
+                hoursDisable(i);
             }
         }
-    } else if ( date.getTime() > new Date().getTime() )
-    {
-        for ( i = start; i <= end; i ++ )
+    } else {
+        if ( date.setHours( 0, 0, 0, 0 ) == new Date().setHours( 0, 0, 0, 0 ) )
         {
-            $( '.startHour, .endHour' ).append( '<option class="activeDay" value="' + i + '">' + i + '</option>' );
-        }
-    } else
-    {
-        for ( var i = start; i <= end; i ++ )
+            for ( i = start; i <= end; i ++ )
+            {
+                hoursBuildNowAMPM(nowHour, i, nowMinutes, startTF, '.startHour');
+                hoursBuildNowAMPM(nowHour, i, nowMinutes, endTF, '.endHour');
+            }
+        } else if ( date.getTime() > new Date().getTime() )
         {
-            $( '.startHour, .endHour' ).append( '<option disabled value="' + i + '">' + i + '</option>' );
+            for ( i = start; i <= end; i ++ )
+            {
+                hoursActiveDayAMPM(i, '.startHour');
+                hoursActiveDayAMPM(i, '.endHour');
+            }
+        } else
+        {
+            for ( var i = start; i <= end; i ++ )
+            {
+                hoursDisableAMPM(i, '.startHour');
+                hoursDisableAMPM(i, '.endHour');
+            }
         }
+    $( ".startHour option[value='0']").text(12);
+    $( ".endHour option[value='0']").text(12);
     }
 }
 
@@ -273,8 +318,8 @@ function validation( year, month, day, insert, recType, duration )
     month = parseInt( month );//console.log(month);
     day = parseInt( day );//console.log(day);
    // var startHour = parseInt($('.startHour' ).val());//console.log(startHour);
-    var startHour = formatEncode(parseInt($('.startHour' ).val()), '.startTimeFormat');
-    var startMinutes = parseInt($('.startMin' ).val());//console.log(startMinutes);
+    var startHour = formatEncode(parseInt($('.startHour option:selected' ).val()), '.startTimeFormat');
+    var startMinutes = parseInt($('.startMin option:selected' ).val());//console.log(startMinutes);
     //var endHour = parseInt($('.endHour' ).val());//console.log(endHour);
     var endHour = formatEncode(parseInt($('.endHour' ).val()), '.endTimeFormat');
     var endMinutes = parseInt($('.endMin' ).val());//console.log(endMinutes);
@@ -282,13 +327,14 @@ function validation( year, month, day, insert, recType, duration )
     var appEnd = new Date(year, month, day, endHour, endMinutes ).getTime();//console.log(appEnd);
     var dayStart = new Date(year, month, day ).getTime(); //console.log(dayStart);
     var dayEnd = new Date(year, month, day, 23, 59).getTime(); //console.log(dayEnd);
+    var room_id = lSgetRoom();
     if (insert == 'insert') {
-        insertApp('index.php?page=AjaxTime', appStart, appEnd, dayStart, dayEnd, '', '');
+        insertApp('index.php?page=AjaxTime', appStart, appEnd, dayStart, dayEnd, room_id);
     } else {
         if ( new Date(year, month, day) >= new Date().setHours( 0, 0, 0, 0 )){
             $('.checkDate' ).html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>');
             if (appEnd > appStart) {
-                checkTime(appStart, appEnd, dayStart, dayEnd, recType, duration);
+                checkTime(appStart, appEnd, dayStart, dayEnd, recType, duration, room_id);
             } else {
                 $('.checkTime' ).html('<span class="glyphicon glyphicon-minus" aria-hidden="true"></span>');
                 $('.newBookItButton' ).attr('disabled', 'disabled');

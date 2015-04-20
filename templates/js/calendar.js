@@ -1,28 +1,43 @@
 $( document ).ready( function ()
 {
     var today = new Date();
-    if ( localStorage.getItem( 'settings' ) == null )
-    {
-        setLS();
-    } else {
-        lSbuttonChanger('start day of week', 'Sunday begin', 'Monday begin', '#weekBegin');
-        lSbuttonChanger('timeFormat', 'AM / PM', '24 Hours', '#timeFormat');
-    }
     var firstDayOfWeekOfMonth = '';
-    var month = today.getMonth();
-    var year = today.getFullYear();
-    var day = today.getDate();
-    var dayOfWeek = today.getDay();
+    var month = '';
+    var year = '';
+    var day = '';
+    var dayOfWeek = '';
     var vfirstDayInMS = '';
     var lastDayOfMonthInMS = '';
     var daysInMonth = '';
     var msInDay = 1000 * 60 * 60 * 24;
-    if (6 == dayOfWeek) {
-        today = new Date(year, month, (day + 2));
-    } else if(0 == dayOfWeek){
-        today = new Date(year, month, (day + 1));
+    todayF(today);
+
+    function todayF(todayD){
+        today = '';
+        if (todayD.getMonth() == new Date().getMonth()) {
+            today = new Date();
+        } else {
+            today = todayD;
+        }
+        //console.log(today);
+        month = today.getMonth();//console.log(month);
+        year = today.getFullYear();//console.log(year);
+        day = today.getDate();//console.log(day);
+        dayOfWeek = today.getDay();//console.log(dayOfWeek);
+        if ( localStorage.getItem( 'settings' ) == null )
+        {
+            setLS();
+        } else {
+            lSbuttonChanger('start day of week', 'Sunday begin', 'Monday begin', '#weekBegin');
+            lSbuttonChanger('timeFormat', 'AM / PM', '24 Hours', '#timeFormat');
+        }
+        if (6 == dayOfWeek) {
+            today = new Date(year, month, (day + 2));
+        } else if(0 == dayOfWeek){
+            today = new Date(year, month, (day + 1));
+        }
+        firstDayInMS( today );
     }
-    firstDayInMS( today );
 
     function firstDayInMS( inputData )
     {
@@ -30,21 +45,21 @@ $( document ).ready( function ()
         var monthName = GetMonthName(date.getMonth());
         $( '#monthYear' ).html( monthName + '  ' + date.getFullYear() );
         today = date;
-       // dayOfWeek = date.getDay(); //console.log('Day of a week: ' + dayOfWeek);
-         //console.log('Date of month: ' + day);
-       //console.log('Month: ' + day);
-         //console.log('Year: ' + year);
+        dayOfWeek = date.getDay(); dayOfWeek = date.getDay(); //console.log('Day of a week: ' + dayOfWeek);
+        day = date.getDate();//console.log('Date of month: ' + day);
+        year = date.getFullYear();//console.log('Month: ' + month);
+        month = date.getMonth();//console.log('Year: ' + year);
         var firstDayOfMonth = new Date( year, month, 1 );
-        daysInMonth = 32 - new Date( year, month, 32 ).getDate(); //console.log('Year: ' + daysInMonth);
+        daysInMonth = 32 - new Date( year, month, 32 ).getDate(); //console.log('daysInMonth: ' + daysInMonth);
         lastDayOfMonthInMS = new Date( year, month, daysInMonth, 23, 59, 59 ).getTime();
-        firstDayOfWeekOfMonth = firstDayOfMonth.getDay();
-        vfirstDayInMS = new Date( year, month, 1 ).getTime();
-        var firstDateInCalendar = startDateInCalendar( vfirstDayInMS );
+        firstDayOfWeekOfMonth = firstDayOfMonth.getDay();//console.log(firstDayOfWeekOfMonth);
+        vfirstDayInMS = new Date( year, month, 1 ).getTime();//console.log(vfirstDayInMS);
+        var firstDateInCalendar = startDateInCalendar( vfirstDayInMS );//console.log(firstDateInCalendar);
         buildTable( firstDateInCalendar );
     }
 
     function startDateInCalendar( firstDayInMS )
-    {//console.log(lScomm());
+    {
         var startDate;
         if ( lScomm() == 'Monday begin' )
         {
@@ -79,6 +94,7 @@ $( document ).ready( function ()
         var dateIncr = startDateBuild;
         var headData;
         var output = '';
+        var room_id = lSgetRoom();
         if ( lScomm() == 'Monday begin' )
         {
             headData += buildHead(lScomm());
@@ -88,7 +104,8 @@ $( document ).ready( function ()
             headData += buildHead(lScomm());
         }
         $.ajax( {
-            url   : 'index.php?page=ajaxcalendarbuilder&start=' + vfirstDayInMS + '&end=' + lastDayOfMonthInMS,
+            url   : 'index.php?page=ajaxcalendarbuilder&start=' + vfirstDayInMS + '&end=' + lastDayOfMonthInMS +
+            '&room_id=' + room_id,
             method: 'GET'
         } ).then( function ( data )
         {
@@ -137,12 +154,13 @@ $( document ).ready( function ()
 
     }
 
+    selectedRoom();
+
     $( '#previous' ).on( 'click', function ()
     {
         var prevMonth = new Date( year, (month - 1), 1 );
         var prevDate = new Date( prevMonth );
-        $( 'td div p' ).fadeOut();
-        firstDayInMS( prevDate );
+        todayF( prevDate );
 
     } );
 
@@ -150,8 +168,7 @@ $( document ).ready( function ()
     {
         var nextMonth = new Date( year, (month + 1), 1 );
         var nextDate = new Date( nextMonth );
-
-        firstDayInMS( nextDate );
+        todayF( nextDate );
     } );
 
     $( '#weekBegin' ).on( 'click', function ()
@@ -165,7 +182,7 @@ $( document ).ready( function ()
             $( '#weekBegin' ).text( 'Sunday begin' );
             lSchanger( "start day of week", 'Monday begin' );
         }
-        firstDayInMS( today );
+        todayF( today );
     } );
 
     $('#timeFormat').on('click', function(){
@@ -179,15 +196,17 @@ $( document ).ready( function ()
             lSchanger( "timeFormat", 'AM / PM' );
         }
 
-        firstDayInMS( today );
+        todayF( today );
     })
 
     function listSchedules( objJSON, currentDay )
     {
         var res = '';
-
+        var lastIndex = objJSON.length;
+        var user_id = objJSON[lastIndex - 1]['user_id'];
         $.each( objJSON, function ( key, val )
         {
+            if (val['user_id'] == user_id || 777 == user_id) {
             $.each( val, function ( key, val )
             {
                 if ( key == 'start_time_ms')
@@ -206,6 +225,26 @@ $( document ).ready( function ()
                     }
                 }
             } );
+        } else {
+            $.each( val, function ( key, val )
+            {
+                if ( key == 'start_time_ms')
+                {
+                    if ( new Date( parseInt( val ) ).getMonth() == new Date( currentDay ).getMonth() &&
+                        new Date( parseInt( val ) ).getDate() == new Date( currentDay ).getDate() )
+                    {
+                        res += '<li>'+timeFormatter(new Date( parseInt( val ) )) + ' - ';
+                    }
+                } else if(key == 'end_time_ms'){
+                    if ( new Date( parseInt( val ) ).getMonth() == new Date( currentDay ).getMonth() &&
+                        new Date( parseInt( val ) ).getDate() == new Date( currentDay ).getDate() )
+                    {
+                        res += timeFormatter(new Date( parseInt( val ) )) + '</li>';
+                    }
+                }
+            } );
+        }
+
         } );
         return res;
     }
@@ -223,7 +262,9 @@ $( document ).ready( function ()
         }
     }
     $('.bookIt').on('click', function(){
-        $('.bookItMonth, .bookItDate, .bookItYear, .startHour, .endHour, .startTimeFormat, .endTimeFormat' ).html('');
+        $('.bookItMonth, .bookItDate, .bookItYear, .startHour,' +
+        ' .endHour, .startTimeFormat, .endTimeFormat, #roomN' ).html('');
+        $('#roomN' ).html(lSgetRoom());
         if ('AM / PM' == getLSTimeFormat()) {
             $('.startTimeFormat, .endTimeFormat' ).append(
                 '<select class="form-control"><option>AM</option><option>PM</option></select>'
@@ -268,6 +309,16 @@ $( document ).ready( function ()
     $('.bookItYear').change(function(){
         curYear = parseInt($(this).val());
         getListOfDays(curYear, curMonth);
+        fillHoursAndMinutes(getTimeFormat(), new Date(curYear, curMonth, curDate));
+        durationCheck();
+        validation(curYear, curMonth, curDate, '', recType, duration );
+    });
+    $('.startTimeFormat').change(function(){
+        fillHoursAndMinutes(getTimeFormat(), new Date(curYear, curMonth, curDate));
+        durationCheck();
+        validation(curYear, curMonth, curDate, '', recType, duration );
+    });
+    $('.endTimeFormat').change(function(){
         fillHoursAndMinutes(getTimeFormat(), new Date(curYear, curMonth, curDate));
         durationCheck();
         validation(curYear, curMonth, curDate, '', recType, duration );
@@ -319,5 +370,15 @@ $( document ).ready( function ()
      $('#calendarTable').on('click', '.appointment', function(){
         console.log($(this ).attr('name'));
         console.log($(this ).text());
+    })
+
+    $('.logOff').on('click', function(){
+        logOff();
+    })
+
+    $('.rooms').on('change', function(){
+        lSchanger( 'room', $(this).val() );
+        selectedRoom();
+        todayF( today );
     })
 } );

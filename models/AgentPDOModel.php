@@ -46,11 +46,12 @@ class AgentPDOModel {
             return true;
         }
     }
-    public function getAppointments($firstDay, $lastDay){
+    public function getAppointments($firstDay, $lastDay, $room_id){
         $pdo = PDOModel::connect();
-        $res = $pdo->select("id, start_time_ms, end_time_ms")
+        $res = $pdo->select("id, user_id, start_time_ms, end_time_ms")
                     ->from("APPOINTMENTS")
-                    ->where("start_time_ms >='$firstDay' AND end_time_ms <='$lastDay' ORDER BY start_time_ms ASC")
+                    ->where("start_time_ms >='$firstDay' AND end_time_ms <='$lastDay' AND
+                    room_id = '$room_id' ORDER BY start_time_ms ASC")
                     ->exec();
         return $res;
     }
@@ -67,11 +68,11 @@ class AgentPDOModel {
         }
     }
 
-    public function checkAppointments($firstDay, $lastDay){
+    public function checkAppointments($firstDay, $lastDay, $room_id){
         $pdo = PDOModel::connect();
         $res = $pdo->select("start_time_ms, end_time_ms")
             ->from("APPOINTMENTS")
-            ->where("start_time_ms ='$firstDay' AND end_time_ms ='$lastDay'")
+            ->where("start_time_ms ='$firstDay' AND end_time_ms ='$lastDay' AND room_id = '$room_id'")
             ->exec();
         if (0 == count($res)) {
             return true;
@@ -80,23 +81,37 @@ class AgentPDOModel {
         }
     }
 
-    public function insertAppointment($user_id, $start, $end, $specifics, $duration){
+    public function insertAppointment($user_id, $start, $end, $specifics, $duration, $room_id){
         $pdo = PDOModel::connect();
         if (empty($_POST['recurringRes'])) {
             $this->resID = $pdo->insert("APPOINTMENTS")
-                ->fields("user_id, start_time_ms, end_time_ms, description")
-                ->values("'$user_id', '$start', '$end', '$specifics'")
+                ->fields("user_id, room_id, start_time_ms, end_time_ms, description")
+                ->values("'$user_id', '$room_id', '$start', '$end', '$specifics'")
                 ->execInsertWithLastID();
         } else {
             $recType = (int)$_POST['recurringRes'];
             $msInDay = 1000 * 60 * 60 * 24;
             $start = $start;
             $end = $end;
+            $recID = 0;
             for ($i = 0; $i <= $duration; $i++) {
-                $this->resID = $pdo->insert("APPOINTMENTS")
-                    ->fields("user_id, start_time_ms, end_time_ms, description")
-                    ->values("'$user_id', '$start', '$end', '$specifics'")
-                    ->execInsertWithLastID();
+                if (0 == $i) {
+                    $this->resID = $pdo->insert("APPOINTMENTS")
+                        ->fields("user_id, room_id, start_time_ms, end_time_ms, description")
+                        ->values("'$user_id', '$room_id', '$start', '$end', '$specifics'")
+                        ->execInsertWithLastID();
+                    $recID = $this->resID;
+                    $pdo->update("APPOINTMENTS")
+                        ->set("recurrent = '$recID'")
+                        ->where("id = '$this->resID'")
+                        ->execInsert();
+                } else {
+                    $this->resID = $pdo->insert("APPOINTMENTS")
+                        ->fields("user_id, room_id, start_time_ms, end_time_ms, recurrent, description")
+                        ->values("'$user_id', '$room_id', '$start', '$end', '$recID', '$specifics'")
+                        ->execInsertWithLastID();
+                }
+
                 $start = ($recType * $msInDay) + $start;
                 $end = ($recType * $msInDay) + $end;
             }
@@ -107,6 +122,14 @@ class AgentPDOModel {
         } else {
             return true;
         }
+    }
+
+    public function getRooms(){
+        $pdo = PDOModel::connect();
+        $res = $pdo->select("room_id, room_name")
+            ->from("rooms")
+            ->exec();
+        return $res;
     }
     /**
      * @return array

@@ -59,11 +59,11 @@ function newUser( url )
     } )
 }
 
-function checkTime( appStart, appEnd, dayStart, dayEnd, recType, duration )
+function checkTime( appStart, appEnd, dayStart, dayEnd, recType, duration, room_id )
 {
     $.ajax( {
         url   : 'index.php?page=AjaxTime&start=' + appStart + '&end=' + appEnd + '&startDay=' +
-        dayStart + '&endDay=' + dayEnd + '&recurringRes=' + recType + '&duration=' + duration,
+        dayStart + '&endDay=' + dayEnd + '&recurringRes=' + recType + '&duration=' + duration + '&room_id=' + room_id,
         method: 'GET'
     } ).then( function ( data )
     {
@@ -90,18 +90,33 @@ function checkTime( appStart, appEnd, dayStart, dayEnd, recType, duration )
     } )
 }
 
-function insertApp( url, appStart, appEnd, dayStart, dayEnd )
+function insertApp( url, appStart, appEnd, dayStart, dayEnd, room_id )
 {
     $.ajax( {
         url   : url,
         method: 'POST',
         data  : $( "#bookForm" ).serialize() + '&start=' + appStart + '&end=' + appEnd +
-        '&startDay=' + dayStart + '&endDay=' + dayEnd
+        '&startDay=' + dayStart + '&endDay=' + dayEnd + '&room_id=' + room_id
+    } ).then( function ( data )
+    {console.log(data);
+        var objJSON = JSON.parse( data );
+        console.log(objJSON[ 0 ]);
+        if ( true == objJSON[ 0 ] )
+        {
+            window.location.href = "/index.php";
+        }
+    } )
+}
+
+function logOff() {
+    $.ajax( {
+        url   : 'index.php?page=LogOffCtrl',
+        method: 'GET'
     } ).then( function ( data )
     {
         var objJSON = JSON.parse( data );
         console.log(objJSON[ 0 ]);
-        if ( true == objJSON[ 0 ] )
+        if ( objJSON[ 0 ] )
         {
             window.location.href = "/index.php";
         }
