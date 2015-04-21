@@ -345,3 +345,13 @@ function validation( year, month, day, insert, recType, duration )
         }
     }
 }
+
+function checkUpdate(curStartHour, curEndHour){
+    console.log(curStartHour);
+    console.log(curEndHour);
+    if (curStartHour >= curEndHour) {
+        $('.update' ).prop('disabled', true);
+    } else {
+        $('.update' ).prop('disabled', false);
+    }
+}

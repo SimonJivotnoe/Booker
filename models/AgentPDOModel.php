@@ -55,6 +55,15 @@ class AgentPDOModel {
                     ->exec();
         return $res;
     }
+    public function getAppointmentsInDay($app_id, $firstDay, $lastDay, $room_id){
+        $pdo = PDOModel::connect();
+        $res = $pdo->select("id, user_id, start_time_ms, end_time_ms")
+            ->from("APPOINTMENTS")
+            ->where("start_time_ms >='$firstDay' AND end_time_ms <='$lastDay' AND
+                    room_id = '$room_id' AND id != '$app_id' ORDER BY start_time_ms ASC")
+            ->exec();
+        return $res;
+    }
     public function getAppointment($id){
         $pdo = PDOModel::connect();
         $res = $pdo->select("id, user_id, start_time_ms, end_time_ms, recurrent, submitted, description")
@@ -63,16 +72,14 @@ class AgentPDOModel {
             ->exec();
         $rec_id = $res[0]['recurrent'];
         $user_id = $res[0]['user_id'];
-        $userList = $pdo->select("user_id, user_name")
-            ->from("EMPLOYEES")
-            ->where("user_id = '$user_id'")
-            ->exec();
+        $userList = $this->getResArr();
         $recc = $pdo->select("id")
             ->from("APPOINTMENTS")
             ->where("recurrent = '$rec_id'")
             ->exec();
         array_push($res, $recc);
         array_push($res, $userList);
+        array_push($res, $user_id);
         return $res;
     }
     public function deleteUser($userId){
@@ -141,6 +148,53 @@ class AgentPDOModel {
         } else {
             return true;
         }
+    }
+
+    public function checkDelete($user_id, $app_id){
+        $pdo = PDOModel::connect();
+        $res = $pdo->select("id")
+            ->from("APPOINTMENTS")
+            ->where("user_id ='$user_id' AND id ='$app_id'")
+            ->exec();
+        if (0 == count($res)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public function deleteAppointment($app_id, $recur){
+        $pdo = PDOModel::connect();
+        if (1 == $recur) {
+            $rec_query = $pdo->select("recurrent")
+                ->from("APPOINTMENTS")
+                ->where("id = '$app_id'")
+                ->exec();
+            $rec_id = $rec_query[0]['recurrent'];
+            $currentTime = time()*1000;
+            $res = $pdo ->delete("APPOINTMENTS")
+                ->where("recurrent = '$rec_id' AND start_time_ms > '$currentTime'")
+                ->execInsert();
+            return true;
+        } else if (0 == $recur){
+            $res = $pdo ->delete("APPOINTMENTS")
+                ->where("id = '$app_id'")
+                ->execInsert();
+            if (0 == count($res)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+    }
+
+    public function updateAppointment($id, $start, $end){
+        $pdo = PDOModel::connect();
+        $pdo->update("APPOINTMENTS")
+            ->set("start_time_ms = '$start' AND end_time_ms = '$end'")
+            ->where("id = '$id'")
+            ->execInsert();
     }
 
     public function getRooms(){

@@ -122,3 +122,38 @@ function logOff() {
         }
     } )
 }
+
+function deleteAppointment(url, app_id){
+    $.ajax( {
+        url   : url,
+        method: 'POST',
+        data  : $( "#editForm" ).serialize() + '&action=delete&app_id=' + app_id
+    } ).then( function ( data )
+    {
+        var objJSON = JSON.parse( data );
+        console.log(objJSON[ 0 ]);
+        if ( true == objJSON[ 0 ] )
+        {
+            window.opener.location.reload();
+            window.close();
+        }
+    } )
+}
+
+function updateAppointment(url, app_id, startDay, endDay, room_id){
+    $.ajax( {
+        url   : url,
+        method: 'POST',
+        data  : $( "#editForm" ).serialize() + '&action=update&app_id=' + app_id +
+        '&startDay=' + startDay + '&endDay=' + endDay + '&room_id=' + room_id
+    } ).then( function ( data )
+    {
+        var objJSON = JSON.parse( data );
+        console.log(objJSON[ 0 ]);
+        if ( true == objJSON[ 0 ] )
+        {
+           /* window.opener.location.reload();
+            window.close();*/
+        }
+    } )
+}

@@ -10,38 +10,43 @@
 <div class="col-md-12 headName">
     B.B. DETAILS
 </div>
-<form>
+<form id='editForm' name='editForm' method='POST'>
     <table class="table">
         <tbody>
         <tr>
             <td class="headName">Start:</td>
             <td>
-                <select name="" class="start">
+                <select class="startHour" name="startHour">
                     %START%
                 </select>
-
-                <select name="">
-                    <option value="">00</option>
-                    <option value="">30</option>
+                <select class="startMin" name="startMin">
+                    <option value="0">00</option>
+                    <option value="30">30</option>
                 </select>
+                <span class="col-md-3 startTimeFormat">
+
+                </span>
             </td>
         </tr>
         <tr>
             <td class="headName">End:</td>
             <td>
-                <select name="" class="end">
+                <select class="endHour" name="endHour">
                     %END%
                 </select>
 
-                <select name="">
-                    <option value="">00</option>
-                    <option value="">30</option>
+                <select class="endMin" name="endMin">
+                    <option value="0">00</option>
+                    <option value="30">30</option>
                 </select>
+                <span class="col-md-3 endTimeFormat">
+
+                </span>
             </td>
         </tr>
         <tr>
             <td class="headName">Notes:</td>
-            <td><input type="text" value="%DESCRIPTION%"/></td>
+            <td><input type="text" name="description" value="%DESCRIPTION%"/></td>
         </tr>
         <tr>
             <td class="headName">Who:</td>
@@ -59,6 +64,8 @@
 
 <script src="templates/js/jquery-1.11.2.min.js"></script>
 <script src="templates/js/edit.js"></script>
+<script src="templates/js/functions.js"></script>
+<script src="templates/js/ajaxEvents.js"></script>
 <!-- Latest compiled and minified CSS -->
 <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">-->
 <link rel="stylesheet" href="templates/libs/bootstrap/css/bootstrap.min.css">
