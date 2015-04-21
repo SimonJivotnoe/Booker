@@ -82,6 +82,16 @@ class AgentPDOModel {
         array_push($res, $user_id);
         return $res;
     }
+
+    public function getAppointmentsByRecId($app_id){
+        $pdo = PDOModel::connect();
+        $res = $pdo->select("id, start_time_ms, end_time_ms")
+            ->from("APPOINTMENTS")
+            ->where("recurrent = '$app_id'")
+            ->exec();
+        return $res;
+    }
+
     public function deleteUser($userId){
         $pdo = PDOModel::connect();
         $res = $pdo ->delete("EMPLOYEES")
@@ -163,14 +173,20 @@ class AgentPDOModel {
         }
     }
 
+    public function getRecurrentId($app_id){
+        $pdo = PDOModel::connect();
+        $rec_query = $pdo->select("recurrent")
+            ->from("APPOINTMENTS")
+            ->where("id = '$app_id'")
+            ->exec();
+        $rec_id = $rec_query[0]['recurrent'];
+        return $rec_id;
+    }
+
     public function deleteAppointment($app_id, $recur){
         $pdo = PDOModel::connect();
         if (1 == $recur) {
-            $rec_query = $pdo->select("recurrent")
-                ->from("APPOINTMENTS")
-                ->where("id = '$app_id'")
-                ->exec();
-            $rec_id = $rec_query[0]['recurrent'];
+            $rec_id = $this->getRecurrentId($app_id);
             $currentTime = time()*1000;
             $res = $pdo ->delete("APPOINTMENTS")
                 ->where("recurrent = '$rec_id' AND start_time_ms > '$currentTime'")
@@ -189,12 +205,17 @@ class AgentPDOModel {
 
     }
 
-    public function updateAppointment($id, $start, $end){
+    public function updateAppointment($id, $start, $end, $description, $user_id){
         $pdo = PDOModel::connect();
-        $pdo->update("APPOINTMENTS")
-            ->set("start_time_ms = '$start' AND end_time_ms = '$end'")
+        $res = $pdo->update("APPOINTMENTS")
+            ->set("start_time_ms = '$start', end_time_ms = '$end', description = '$description', user_id = '$user_id'")
             ->where("id = '$id'")
             ->execInsert();
+        if (0 == count($res)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public function getRooms(){

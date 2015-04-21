@@ -17,16 +17,26 @@ class EditPaletteModel {
         $this->repArr['%END%'] = $arr[0]['end_time_ms'];
         $this->repArr['%SUBMITTED%'] = $arr[0]['submitted'];
         $this->repArr['%DESCRIPTION%'] = $arr[0]['description'];
+        $users_arr = array('%NAME' => '', '%CLASS%' => '');
         $userList = '';
         foreach ($arr[2] as $key => $val) {
-            if ($arr[3] == $val['user_id']) {
-                $userList .= '<option selected><strong>'.$val['user_name'].'</strong></option>';
+            if (1 == count($arr[2])) {
+                if ($arr[3] == $val['user_id']) {
+                    $userList .= '<option selected><strong>'.$val['user_name'].'</strong></option>';
+                }
             } else {
-                $userList .= '<option>'.$val['user_name'].'</option>';
+                if ($arr[3] == $val['user_id']) {
+                    $userList .= '<option value="'.$val['user_id'].
+                        '" selected><strong>'.$val['user_name'].'</strong></option>';
+                } else {
+                    $userList .= '<option value="'.$val['user_id'].'">'.$val['user_name'].'</option>';
+                }
+                $users_arr['%NAME%'] = 'user';
             }
-        }
 
-        $this->repArr['%USER%'] = $userList;
+        }
+        $users_arr['%USERLIST%'] = $userList;
+        $this->repArr['%USER%'] = $sub->subHTMLReplace('userList.html', $users_arr);
         if(!empty($arr[1])){
             $recc = $sub->subHTMLReplace('ifRecurrent.html',array() );
             $this->repArr['%RECURRENT%'] = $recc;

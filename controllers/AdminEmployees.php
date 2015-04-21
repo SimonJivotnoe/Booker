@@ -1,7 +1,7 @@
 <?php
 
 
-class DeleteUser {
+class AdminEmployees {
 public function __construct() {
     $objView = DataContModel::getInstance();
     $userId = $_GET['userId'];

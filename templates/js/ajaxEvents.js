@@ -140,20 +140,25 @@ function deleteAppointment(url, app_id){
     } )
 }
 
-function updateAppointment(url, app_id, startDay, endDay, room_id){
+function updateAppointment(url, app_id, room_id){
     $.ajax( {
         url   : url,
         method: 'POST',
         data  : $( "#editForm" ).serialize() + '&action=update&app_id=' + app_id +
-        '&startDay=' + startDay + '&endDay=' + endDay + '&room_id=' + room_id
+        '&startDay=' + '&room_id=' + room_id
     } ).then( function ( data )
-    {
+    {console.log(data);
         var objJSON = JSON.parse( data );
-        console.log(objJSON[ 0 ]);
+        console.log(objJSON);
         if ( true == objJSON[ 0 ] )
         {
-           /* window.opener.location.reload();
-            window.close();*/
+            window.opener.location.reload();
+            window.close();
+        } else {
+            $('.errMess' ).html('Conflict at ' + objJSON[ 0 ]);
+            $('.update, .delete' ).prop('disabled', true);
+            setTimeout('window.close()', 1100);
+            setTimeout('window.opener.location.reload()', 1100);
         }
     } )
 }

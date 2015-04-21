@@ -12,6 +12,7 @@ class AjaxTime
     private $recurring;
     private $recType;
     private $duration;
+    private $user_id;
     public function __construct()
     {
         $objView = DataContModel::getInstance();
@@ -87,8 +88,12 @@ class AjaxTime
         $objView = DataContModel::getInstance();
         $objAgent = new AgentPDOModel();$objView->setData(array(0 => $_POST));
         if (!empty($_POST['formMonth'])) {
-            $user_id = $_SESSION['BookerID'];
-            $ins = $objAgent->insertAppointment($user_id, $this->start, $this->end,
+             if (isset($_POST[ 'userBookIt' ])) {
+                $this->user_id = $_POST[ 'userBookIt' ];
+            } else {
+                $this->user_id = $_SESSION[ 'BookerID' ];
+            }
+            $ins = $objAgent->insertAppointment($this->user_id, $this->start, $this->end,
                 $this->specifics, $this->duration, $this->room_id);
             if ($ins) {
                 $objView->setData(array(0 => true));

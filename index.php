@@ -1,7 +1,7 @@
 <?php
 include 'config.php'; //connect config file
 include 'Router.php'; //connect Router
-
+date_default_timezone_set('Europe/Kiev');
 function __autoload($class)
 {
    $directories = array( //include all directories in Array

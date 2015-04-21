@@ -374,7 +374,7 @@ $( document ).ready( function ()
          var room_id = lSgetRoom();
          window.open("index.php?page=EditUpdateCtrl&id=" + idApp +
              "&room_id=" + room_id, "_blank",
-             "location, width=350px, height=300px, resizable=no, toolbar=no");
+             "location, width=350px, height=350px, resizable=no, toolbar=no");
     })
 
     $('.logOff').on('click', function(){

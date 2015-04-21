@@ -8,7 +8,7 @@
 </head>
 <body>
 <div class="col-md-12 headName">
-    B.B. DETAILS
+    B.B. DETAILS <span class="nowEdit"></span>
 </div>
 <form id='editForm' name='editForm' method='POST'>
     <table class="table">
@@ -23,9 +23,6 @@
                     <option value="0">00</option>
                     <option value="30">30</option>
                 </select>
-                <span class="col-md-3 startTimeFormat">
-
-                </span>
             </td>
         </tr>
         <tr>
@@ -39,10 +36,7 @@
                     <option value="0">00</option>
                     <option value="30">30</option>
                 </select>
-                <span class="col-md-3 endTimeFormat">
-
-                </span>
-            </td>
+                 </td>
         </tr>
         <tr>
             <td class="headName">Notes:</td>
@@ -50,9 +44,9 @@
         </tr>
         <tr>
             <td class="headName">Who:</td>
-            <td><select name="">
+            <td id="user">
                 %USER%
-            </select></td>
+            </td>
         </tr>
         </tbody>
     </table>
@@ -61,7 +55,7 @@
     %BUTTONS%
 
 </form>
-
+<span class="errMess"></span>
 <script src="templates/js/jquery-1.11.2.min.js"></script>
 <script src="templates/js/edit.js"></script>
 <script src="templates/js/functions.js"></script>
