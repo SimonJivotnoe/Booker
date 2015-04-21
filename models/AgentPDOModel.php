@@ -55,7 +55,26 @@ class AgentPDOModel {
                     ->exec();
         return $res;
     }
-
+    public function getAppointment($id){
+        $pdo = PDOModel::connect();
+        $res = $pdo->select("id, user_id, start_time_ms, end_time_ms, recurrent, submitted, description")
+            ->from("APPOINTMENTS")
+            ->where("id = '$id'")
+            ->exec();
+        $rec_id = $res[0]['recurrent'];
+        $user_id = $res[0]['user_id'];
+        $userList = $pdo->select("user_id, user_name")
+            ->from("EMPLOYEES")
+            ->where("user_id = '$user_id'")
+            ->exec();
+        $recc = $pdo->select("id")
+            ->from("APPOINTMENTS")
+            ->where("recurrent = '$rec_id'")
+            ->exec();
+        array_push($res, $recc);
+        array_push($res, $userList);
+        return $res;
+    }
     public function deleteUser($userId){
         $pdo = PDOModel::connect();
         $res = $pdo ->delete("EMPLOYEES")

@@ -11,7 +11,6 @@ class AjaxCalendarBuilder {
         $objAgent = new AgentPDOModel();
         $res = $objAgent->getAppointments($firstDay, $lastDay, $room_id);
         array_push($res, array('user_id' => $user_id));
-        //$res['7777777'] = array('0' => $user_id);
         $objView->setData($res);
     }
 } 

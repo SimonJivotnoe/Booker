@@ -148,8 +148,8 @@ $( document ).ready( function ()
                 output += outputTD + "</tr>";
             }
             $( '#calendarTable' ).empty();
-            $( '#calendarTable' ).append( headData );
-            $( '#calendarTable' ).append( output );
+            $('body' ).fadeIn(100);
+            $( '#calendarTable' ).append( headData, output );
         } );
 
     }
@@ -207,21 +207,21 @@ $( document ).ready( function ()
         $.each( objJSON, function ( key, val )
         {
             if (val['user_id'] == user_id || 777 == user_id) {
-            $.each( val, function ( key, val )
+            $.each( val, function ( key, value )
             {
                 if ( key == 'start_time_ms')
                 {
-                    if ( new Date( parseInt( val ) ).getMonth() == new Date( currentDay ).getMonth() &&
-                        new Date( parseInt( val ) ).getDate() == new Date( currentDay ).getDate() )
+                    if ( new Date( parseInt( value ) ).getMonth() == new Date( currentDay ).getMonth() &&
+                        new Date( parseInt( value ) ).getDate() == new Date( currentDay ).getDate() )
                     {
-                        res += '<li><a class="appointment" name="'+new Date( currentDay ).getDate()+'">' +
-                        timeFormatter(new Date( parseInt( val ) )) + ' - ';
+                        res += '<li><a class="appointment" name="'+val['id']+'">' +
+                        timeFormatter(new Date( parseInt( value ) )) + ' - ';
                     }
                 } else if(key == 'end_time_ms'){
-                    if ( new Date( parseInt( val ) ).getMonth() == new Date( currentDay ).getMonth() &&
-                        new Date( parseInt( val ) ).getDate() == new Date( currentDay ).getDate() )
+                    if ( new Date( parseInt( value ) ).getMonth() == new Date( currentDay ).getMonth() &&
+                        new Date( parseInt( value ) ).getDate() == new Date( currentDay ).getDate() )
                     {
-                        res += timeFormatter(new Date( parseInt( val ) )) + '</a></li>';
+                        res += timeFormatter(new Date( parseInt( value ) )) + '</a></li>';
                     }
                 }
             } );
@@ -356,9 +356,11 @@ $( document ).ready( function ()
     $('#duration').on('keyup change', function(){
         var max = $('#duration' ).attr('max');
         var min = $('#duration' ).attr('min');
-        if ($('#duration' ).val() >= max) {
+        console.log(parseInt($('#duration' ).val()));
+        console.log('ok');
+        if (parseInt($('#duration' ).val()) >= max) {
             $('#duration' ).val(max);
-        } else if($('#duration' ).val() <= min){
+        } else if(parseInt($('#duration' ).val()) <= min){
             $('#duration' ).val(min);
         }
         validation(curYear, curMonth, curDate, '', recType, parseInt($('#duration' ).val()));
@@ -368,8 +370,11 @@ $( document ).ready( function ()
         validation(curYear, curMonth, curDate, 'insert', '', '');
     })
      $('#calendarTable').on('click', '.appointment', function(){
-        console.log($(this ).attr('name'));
-        console.log($(this ).text());
+        var idApp = $(this ).attr('name');
+         var room_id = lSgetRoom();
+         window.open("index.php?page=EditUpdateCtrl&id=" + idApp +
+             "&room_id=" + room_id, "_blank",
+             "location, width=350px, height=300px, resizable=no, toolbar=no");
     })
 
     $('.logOff').on('click', function(){
