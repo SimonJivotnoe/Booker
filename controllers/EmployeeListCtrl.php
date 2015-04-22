@@ -1,7 +1,7 @@
 <?php
 
 
-class Employee_list_ctrl {
+class EmployeeListCtrl {
 public function __construct() {
     $objView = DataContModel::getInstance();
     $user_id = $_SESSION['BookerID'];

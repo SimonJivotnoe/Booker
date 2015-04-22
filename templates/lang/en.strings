@@ -28,4 +28,9 @@
     <KEY>EMAIL ADDRESS</KEY>
   <VALUE>Email address</VALUE>
 </ISTRING>
+<ISTRING>
+    <KEY>BOOK_IT</KEY>
+  <VALUE>Book it!</VALUE>
+</ISTRING>
+
 </ISTRINGTABLE>

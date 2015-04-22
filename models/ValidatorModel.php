@@ -43,6 +43,17 @@ class ValidatorModel
         }
     }
 
+    public function emailCheck($email){
+        $res = filter_var($email, FILTER_VALIDATE_EMAIL);
+        if ($res) {
+            return $res;
+        } else {
+            $this->errorsMess[ 'EMAIL_ERR' ] = 'Wrong EMAIL Format';
+            return $res;
+        }
+
+    }
+
     public function checkTime($arr, $start, $end){
         $check = 0;
         foreach ($arr as $key => $val) {

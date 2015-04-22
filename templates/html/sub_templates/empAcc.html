@@ -2,7 +2,7 @@
     <div class="panel-heading">
         <h4 class="panel-title">
 
-            <a href="mailto:test@mail.ru">
+            <a href="mailto:%USER_EMAIL%">
                 <span class="col-md-4 userName">%USER_NAME%</span>
 
             </a>
@@ -26,13 +26,15 @@
                     <th>Email</th>
                 </tr>
                 <tr>
-                    <td><input type="textfield" value="%USER_NAME%"/></td>
-                    <td><input type="textfield" value="%USER_PASS%"/></td>
-                    <td><input type="textfield" value="%USER_EMAIL%"/></td>
+                    <td><input type="textfield" value="%USER_NAME%" class="editName"/></td>
+                    <td><input type="textfield" value="%USER_PASS%" class="editPass"/></td>
+                    <td><input type="textfield" value="%USER_EMAIL%" class="editEmail"/></td>
                 </tr>
                 </tbody>
             </table>
-            <button type="button" name="%USER_ID%" class="btn btn-success pull-right">Save</button>
+            <button type="button" name="%USER_ID%" class="btn btn-success pull-right save">Save</button>
+            <span class="errEdit"></span>
+            <span class="okEdit"></span>
         </div>
     </div>
 </div>

@@ -35,24 +35,51 @@ function deleteUser( url, userId )
     } )
 }
 
-function newUser( url )
+function newUser( url, name, pass, mail )
 {
     $.ajax( {
-        url   : url,
-        method: 'POST',
-        data  : $( ".newUser" ).serialize()
+        url   : url + '&name=' + name + '&pass=' + pass + '&mail=' + mail,
+        method: 'GET'
     } ).then( function ( data )
     {
         var objJSON = JSON.parse( data );
-        console.log( data );
-        if ( Object.keys( objJSON ).length == 0 )
+        if ( true == objJSON[ 0 ] )
         {
-            window.location.href = "/index.php";
+            window.location.href = "/index.php?page=EmployeeListCtrl";
         } else
         {
             $.each( objJSON, function ( key, val )
             {
-                $( '.' + key ).html( val );
+                $.each( val, function ( key, value )
+                {
+                    $( '#err' ).append( '<p>' + value + '</p>');
+                })
+
+            } )
+        }
+    } )
+}
+
+function editUser( url, name, pass, mail, user_id, errSpan )
+{
+    $.ajax( {
+        url   : url + '&name=' + name + '&pass=' + pass + '&mail=' + mail + '&userId=' + user_id,
+        method: 'GET'
+    } ).then( function ( data )
+    {
+        var objJSON = JSON.parse( data );
+        if ( true == objJSON[ 0 ] )
+        {
+            window.location.href = "/index.php?page=EmployeeListCtrl";
+        } else
+        {
+            $.each( objJSON, function ( key, val )
+            {
+                $.each( val, function ( key, value )
+                {console.log(value);
+                    errSpan.append( '<p>' + value + '</p>');
+                })
+
             } )
         }
     } )

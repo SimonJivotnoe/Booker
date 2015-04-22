@@ -28,4 +28,8 @@
          <KEY>EMAIL ADDRESS</KEY>
        <VALUE>Электронная почта</VALUE>
      </ISTRING>
+	 <ISTRING>
+    <KEY>BOOK_IT</KEY>
+  <VALUE>Забронировать!</VALUE>
+</ISTRING>
 </ISTRINGTABLE>

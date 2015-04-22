@@ -14,7 +14,7 @@ $( document ).ready( function ()
 
     function todayF(todayD){
         today = '';
-        if (todayD.getMonth() == new Date().getMonth()) {
+        if (todayD.getMonth() == new Date().getMonth() && todayD.getFullYear() == new Date().getFullYear()) {
             today = new Date();
         } else {
             today = todayD;
@@ -148,7 +148,7 @@ $( document ).ready( function ()
                 output += outputTD + "</tr>";
             }
             $( '#calendarTable' ).empty();
-            $('body' ).fadeIn(100);
+            $('body' ).fadeIn(50);
             $( '#calendarTable' ).append( headData, output );
         } );
 

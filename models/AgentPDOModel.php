@@ -92,17 +92,6 @@ class AgentPDOModel {
         return $res;
     }
 
-    public function deleteUser($userId){
-        $pdo = PDOModel::connect();
-        $res = $pdo ->delete("EMPLOYEES")
-            ->where("user_id = '$userId'")
-            ->execInsert();
-        if (0 == count($res)) {
-            return false;
-        } else {
-            return true;
-        }
-    }
 
     public function checkAppointments($firstDay, $lastDay, $room_id){
         $pdo = PDOModel::connect();
@@ -225,6 +214,84 @@ class AgentPDOModel {
             ->exec();
         return $res;
     }
+
+    public function deleteUser($userId){
+        $pdo = PDOModel::connect();
+        $res = $pdo ->delete("EMPLOYEES")
+            ->where("user_id = '$userId'")
+            ->execInsert();
+        if (0 == count($res)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public function checkLogin($user_name){
+        $pdo = PDOModel::connect();
+        $res = $pdo ->select("user_name, user_id")
+            ->from("EMPLOYEES")
+            ->where("user_name = '$user_name'")
+            ->exec();
+        if (0 == count($res)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function checkEmail($user_mail){
+        $pdo = PDOModel::connect();
+        $res = $pdo ->select("user_mail, user_id")
+            ->from("EMPLOYEES")
+            ->where("user_mail = '$user_mail'")
+            ->exec();
+        if (0 == count($res)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function addUser($user_name, $user_pass, $user_mail){
+        $pdo = PDOModel::connect();
+        $checkUser = $this->checkLogin($user_name);
+        $checkEmail = $this->checkEmail($user_mail);
+            if (!$checkUser || !$checkEmail) {
+            return array('Already' => 'such login or Email already exists');
+        } else {
+            $res = $pdo->insert("EMPLOYEES")
+                ->fields("user_name, user_pass, user_mail")
+                ->values("'$user_name', '$user_pass', '$user_mail'")
+                ->execInsert();
+            if (0 == count($res)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    public function updateUser($user_name, $user_pass, $user_mail, $user_id){
+        $pdo = PDOModel::connect();
+        $checkUser = $this->checkLogin($user_name);
+        $checkEmail = $this->checkEmail($user_mail);
+        if (!$checkUser || !$checkEmail) {
+            return array('Already' => 'such login or Email already exists');
+        } else {
+            $res = $pdo->update("EMPLOYEES")
+                ->set("user_name = '$user_name', user_pass = '$user_pass',
+                 user_mail = '$user_mail'")
+                ->where("user_id = '$user_id'")
+                ->execInsert();
+            if (0 == count($res)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
     /**
      * @return array
      */
