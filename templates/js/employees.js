@@ -10,4 +10,10 @@ $( document ).ready( function ()
     $('.newUserButton').on('click', function(){
         newUser('index.php?page=AdminEmployees&action=add');
     })
+
+    $('.userName').hover(function(){
+        $( this ).append( $( '<span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>' ) );
+    }, function() {
+        $( this ).find( "span:last" ).remove();}
+    )
 });

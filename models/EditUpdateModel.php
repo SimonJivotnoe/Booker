@@ -43,8 +43,14 @@ class EditUpdateModel
             } else {
                 $valid = $objValid->checkTime($appList, $startTime, $endTime);
                 if (0 == $valid) {
-                    $ins = $objAgent->updateAppointment($app_id, $startTime, $endTime, $description, $user_id);
-                    return $ins;
+                    if ($currentTime < ($startTime / 1000)
+                        && $currentTime < ($appDetails[ 0 ][ 'start_time_ms' ] / 1000)
+                        && ($startTime / 1000) < ($endTime / 1000)) {
+                        $ins = $objAgent->updateAppointment($app_id, $startTime, $endTime, $description, $user_id);
+                        return $ins;
+                    } else {
+                        return $arrMess[ 'Error' ] = $date.'.'.$month.'.'.$year;
+                    }
                 } else {
                     return $arrMess[ 'Error' ] = $date.'.'.$month.'.'.$year;
                 }
@@ -65,9 +71,9 @@ class EditUpdateModel
                 $endTime = ($newTimeEnd + $startDay) * 1000;
                 $appList = $objAgent->getAppointmentsInDay($val[ 'id' ], $startDay * 1000, $endDay * 1000, $room_id);
                 if (empty($appList)) {
-                    if ($currentTime < ($startTime / 1000) && $currentTime < ($val[ 'start_time_ms' ] / 1000) && ($startTime / 1000) < ($endTime / 1000)) {
+                    if ($currentTime < ($startTime / 1000) && $currentTime < ($val[ 'start_time_ms' ] / 1000) &&
+                        ($startTime / 1000) < ($endTime / 1000)) {
                         $ins = $objAgent->updateAppointment($val[ 'id' ], $startTime, $endTime, $description, $user_id);
-                        //$objView->setData(array(0 => $ins));
                     } else {
                         $arrMess[ 'Error' ] = $date.'.'.$month.'.'.$year;
                     }
@@ -75,7 +81,13 @@ class EditUpdateModel
                 } else {
                     $valid = $objValid->checkTime($appList, $startTime, $endTime);
                     if (0 == $valid) {
-                        $ins = $objAgent->updateAppointment($val[ 'id' ], $startTime, $endTime, $description, $user_id);
+                        if ($currentTime < ($startTime / 1000) && $currentTime < ($val[ 'start_time_ms' ] / 1000) &&
+                            ($startTime / 1000) < ($endTime / 1000)) {
+                            $ins = $objAgent->updateAppointment($val[ 'id' ],
+                                $startTime, $endTime, $description, $user_id);
+                        } else {
+                            $arrMess[ 'Error' ] = $date.'.'.$month.'.'.$year;
+                        }
                     } else {
                         $arrMess[ 'Error' ] = $date.'.'.$month.'.'.$year;
                     }

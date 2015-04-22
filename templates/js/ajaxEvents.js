@@ -22,7 +22,6 @@ function checkInputs( url )
 
 function deleteUser( url, userId )
 {
-    console.log( url + userId );
     $.ajax( {
         url   : url + userId,
         method: 'GET'
