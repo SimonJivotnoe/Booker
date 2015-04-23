@@ -46,4 +46,4 @@ class LangModel {
         }
         return $this->finalArr;
     }
-} 
+}

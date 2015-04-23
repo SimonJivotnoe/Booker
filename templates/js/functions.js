@@ -1,7 +1,12 @@
-function buildHead( day )
+function buildHead( day)
 {
     var headData = '<tr>';
-    var nameDayOfWeek = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
+    var nameDayOfWeek = '';
+    if ('en' == $.cookie('lang')) {
+        nameDayOfWeek = lSgetTranslation('days')
+    } else {
+        nameDayOfWeek = lSgetTranslation('days');
+    }
     if ( day == 'Monday begin' )
     {
         for ( var i = 0; i <= 6; i ++ )
@@ -53,6 +58,29 @@ function lSbuttonChanger(paramKey, paramVal1, paramVal2, buttonName){
     }
 }
 
+function lSgetTranslation(what){
+    var res = [];
+    var objLS = JSON.parse( localStorage[ what ] );
+    if ('en' == $.cookie('lang')) {
+        $.each( objLS, function ( key, val )
+        {
+            $.each( val, function ( key, value )
+            {
+                res.push(key);
+            } );
+        } );
+    } else {
+        $.each( objLS, function ( key, val )
+        {
+            $.each( val, function ( key, value )
+            {
+                res.push(value);
+            } );
+        } );
+    }
+    return res;
+}
+
 function lSchanger( paramKey, paramVal )
 {
     var objLS = JSON.parse( localStorage[ 'settings' ] );
@@ -61,6 +89,31 @@ function lSchanger( paramKey, paramVal )
         val[paramKey] = paramVal;
     } );
     localStorage[ 'settings' ] = JSON.stringify(objLS);
+}
+
+function lSgetRoom(){
+    var objLS = JSON.parse( localStorage[ 'settings' ] );
+    return parseInt(objLS[ 0 ][ 'room' ]);
+}
+
+function lSsetLangs(){
+    localStorage[ 'days' ] =
+        JSON.stringify( [ {'Monday' : 'Понедельник', 'Tuesday' : 'Вторник', 'Wednesday' : 'Среда',
+            'Thursday' : 'Четверг', 'Friday' : 'Пятница', 'Saturday' : 'Суббота', 'Sunday' : 'Воскресенье'} ] );
+    localStorage[ 'month' ] =
+        JSON.stringify( [ {'January' : 'Январь',
+            'February' : 'Февраль',
+            'March' : 'Март',
+            'April' : 'Апрель',
+            'May' : 'Май',
+            'June' : 'Июнь',
+            'July' : 'Июль',
+            'August' : 'Август',
+            'September' : 'Сентябрь',
+            'October' : 'Октябрь',
+            'November' : 'Ноябрь',
+            'December' : 'Декабрь'
+        } ] );
 }
 
 function twoDigitsInMinutes(minutes) {
@@ -93,21 +146,32 @@ function timeFormatter(hours){
 
 }
 
-function lSgetRoom(){
-    var objLS = JSON.parse( localStorage[ 'settings' ] );
-    return parseInt(objLS[ 0 ][ 'room' ]);
-}
-
 function selectedRoom(){
     var room_id = lSgetRoom();
     $(".rooms option[value="+room_id+"]" ).prop('selected', true);
 }
 
-var months = [ 'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December' ];
 function GetMonthName( monthNumber )
 {
-
+    var months = [];
+    var objLS = JSON.parse( localStorage[ 'month' ] );
+    if ('en' == $.cookie('lang')) {
+        $.each( objLS, function ( key, val )
+        {
+            $.each( val, function ( key, value )
+            {
+                months.push(key);
+            } );
+        } );
+    } else {
+        $.each( objLS, function ( key, val )
+        {
+            $.each( val, function ( key, value )
+            {
+                months.push(value);
+            } );
+        } );
+    }
     return months[ monthNumber ];
 }
 
@@ -148,10 +212,10 @@ function fillDateSelect( month, lastDayOfMonth, dayStart, year )
     {
         if ( i == month )
         {
-            $( '.bookItMonth' ).append( '<option selected="selected" value="' + i + '">' + months[ i ] + '</option>' );
+            $( '.bookItMonth' ).append( '<option selected="selected" value="' + i + '">' + GetMonthName(i) + '</option>' );
         } else
         {
-            $( '.bookItMonth' ).append( '<option value="' + i + '">' + months[ i ] + '</option>' );
+            $( '.bookItMonth' ).append( '<option value="' + i + '">' + GetMonthName(i) + '</option>' );
         }
 
     }

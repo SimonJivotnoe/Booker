@@ -10,6 +10,7 @@ $( document ).ready( function ()
     var lastDayOfMonthInMS = '';
     var daysInMonth = '';
     var msInDay = 1000 * 60 * 60 * 24;
+    lSsetLangs();
     todayF(today);
 
     function todayF(todayD){
@@ -95,21 +96,23 @@ $( document ).ready( function ()
         var headData;
         var output = '';
         var room_id = lSgetRoom();
-        if ( lScomm() == 'Monday begin' )
-        {
-            headData += buildHead(lScomm());
 
-        } else
-        {
-            headData += buildHead(lScomm());
-        }
         $.ajax( {
-            url   : 'index.php?page=ajaxcalendarbuilder&start=' + vfirstDayInMS + '&end=' + lastDayOfMonthInMS +
+            url   : 'index.php?page=AjaxCalendarBuilder&start=' + vfirstDayInMS + '&end=' + lastDayOfMonthInMS +
             '&room_id=' + room_id,
             method: 'GET'
         } ).then( function ( data )
         {
-            var objJSON = JSON.parse( data );
+            var objJSON = JSON.parse( data );console.log(objJSON);
+            var lastIndex = objJSON.length;
+            if ( lScomm() == 'Monday begin' )
+            {
+                headData += buildHead(lScomm());
+
+            } else
+            {
+                headData += buildHead(lScomm());
+            }
             for ( var i = 0; i <= 5; i ++ )
             {
                 output += "<tr>";

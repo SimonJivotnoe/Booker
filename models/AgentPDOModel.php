@@ -209,8 +209,9 @@ class AgentPDOModel {
 
     public function getRooms(){
         $pdo = PDOModel::connect();
+        $rooms = ROOMS;
         $res = $pdo->select("room_id, room_name")
-            ->from("rooms")
+            ->from("rooms LIMIT $rooms")
             ->exec();
         return $res;
     }

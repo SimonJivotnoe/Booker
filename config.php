@@ -10,6 +10,7 @@ define ('BOOKER', 'booker.html');
 define ('EMPLOYEES', 'employees.html');
 define ('HEADER', 'Content-Type: text/html; charset=UTF-8');
 define ('SALT', 'booker');
+define ('ROOMS', 3);
 
 
 
